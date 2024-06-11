@@ -45,7 +45,7 @@ const VenueCategories = (props) => {
             console.log(venueId);
             GetToken()
         }
-    },[!data, !props.route.params, tokenData])
+    },[venueId])
 
     return (
         <View style={{ flex: 1, alignItems: 'center', padding: 10 }}>
