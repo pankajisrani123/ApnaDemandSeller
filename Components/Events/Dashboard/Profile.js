@@ -8,13 +8,13 @@ import { Image, ToastAndroid, View } from "react-native";
 const Profile = (props) => {
 
     const GetToken = async () => {
-        await AsyncStorage.getItem("token").then((res)=>{
-            if(res){
+        await AsyncStorage.getItem("token").then((res) => {
+            if (res) {
                 GetProfile(res)
-            }else{
+            } else {
                 ToastAndroid.show("Authorization error", ToastAndroid.SHORT)
             }
-        }).catch((err)=>{
+        }).catch((err) => {
             console.log(err);
         })
     }
@@ -24,37 +24,23 @@ const Profile = (props) => {
             headers: {
                 Authorization: `Bearer ${tokenData}`,
             },
-        }).then((res)=>{
-            if(res){
-                if(res.data.status){
+        }).then((res) => {
+            if (res) {
+                if (res.data.status) {
                     console.log(res.data.user_details);
-                }else{
+                } else {
                     ToastAndroid.SHORT("Authorization error", ToastAndroid.SHORT)
                 }
-            }else{
+            } else {
                 ToastAndroid.show("Fetching data error, Try again!", ToastAndroid.SHORT)
             }
-        }).catch((err)=>{
+        }).catch((err) => {
             console.log(err);
         });
 
-        /**
-         * Mail password testing
-         * 
-         * AIzaSyB_Tnu5hw7u8B4BfcRFIc-0FItvkZjow_Y
-         * Google maps api key
-         * 
-         * react native Geocoder
-         * https://www.npmjs.com/package/react-native-geocoding
-         * 
-         * Emailezample@mail.com
-           Adi@12345
-
-           Make it dynamic
-         */
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         GetToken()
     })
 
