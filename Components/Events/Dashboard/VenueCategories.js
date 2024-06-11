@@ -23,12 +23,21 @@ const VenueCategories = (props) => {
     const GetToken = async () => {
         await AsyncStorage.getItem("token").then((rs) => {
             setTokenData(rs)
+            GetVenueCategories(rs)
         })
         setData(props.route.params.data)
         console.log(data);
     }
 
-    
+    const GetVenueCategories = async (token) =>{
+        await axios.get(`https://apnademand.com/api/venue/get-venueCategories/${venueId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((rs)=>{
+            setData(rs.data.venue_categories)
+        })
+    }
 
     useEffect(() => {
         if (props.route.params) {
@@ -36,7 +45,7 @@ const VenueCategories = (props) => {
             console.log(venueId);
             GetToken()
         }
-    })
+    },[!data, !props.route.params, tokenData])
 
     return (
         <View style={{ flex: 1, alignItems: 'center', padding: 10 }}>

@@ -18,8 +18,8 @@ const BottomNavigationBar = ({ navigation }) => {
         <View style={styles.container}>
           <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 1 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
             onPress={() => {
-              navigation.navigate("Dashboard")
               setSelection(1)
+              navigation.navigate("Dashboard")
             }} activeOpacity={0.6}>
             <Home />
           </TouchableOpacity>
@@ -29,13 +29,15 @@ const BottomNavigationBar = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 3 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
             onPress={() => {
-              navigation.navigate("SelectVenue")
               setSelection(3)
+              navigation.navigate("SelectVenue")
+              
             }} activeOpacity={0.6}>
             <Cart />
           </TouchableOpacity>
           <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 4 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
-            onPress={() => { setSelection(4) }} activeOpacity={0.6}>
+            onPress={() => { setSelection(4)
+              navigation.navigate("Profile") }} activeOpacity={0.6}>
             <Profile />
           </TouchableOpacity>
         </View>

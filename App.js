@@ -18,6 +18,7 @@ import Geocoder from 'react-native-geocoding';
 import Dashboard from './Components/Events/Dashboard/Dashboard';
 import SelectVenue from './Components/Events/Dashboard/SelectVenue';
 import VenueCategories from './Components/Events/Dashboard/VenueCategories';
+import Profile from './Components/Events/Dashboard/Profile';
 
 
 
@@ -63,13 +64,6 @@ const App = () => {
         await AsyncStorage.setItem('token', value)
     }
 
-    const GetVenue = async (tokenData) => {
-        const res = await axios.get('https://apnademand.com/api/venue/get-venues', {
-            headers: {
-                Authorization: `Bearer ${tokenData}`
-            },
-        })
-    }
 
 
     const GetProfile = async (tokenData) => {
@@ -115,6 +109,7 @@ const App = () => {
                     <Stack.Screen name='Dashboard' component={Dashboard} />
                     <Stack.Screen name='SelectVenue' component={SelectVenue} />
                     <Stack.Screen name='VenueCategories' component={VenueCategories} />
+                    <Stack.Screen name='Profile' component={Profile} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
