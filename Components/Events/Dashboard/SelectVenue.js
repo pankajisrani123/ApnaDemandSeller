@@ -91,6 +91,7 @@ const SelectVenue = (props) => {
                 {data ?
                     <FlatList
                         data={data}
+                        showsVerticalScrollIndicator={false}
                         contentContainerStyle={{ paddingBottom: 300 }}
                         renderItem={(item) => {
                             return (

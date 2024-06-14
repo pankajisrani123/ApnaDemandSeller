@@ -49,16 +49,16 @@ const Dashboard = (props) => {
                     <Image source={require('../../../Assets/Images/AppBg.png')} style={{ flex: 1, height: 1500 }} />
                 </View>
                 <HeaderText style={{ marginTop: 20 }} />
-                <View style={{ flex: 0.5 }}>
+                <View style={{ height:280, }}>
                     <ImageSlider
                         data={[
+                            { img: 'https://i.ibb.co/mhSnh53/banner.png' },
                             { img: 'https://i.ibb.co/mhSnh53/banner.png' },
                             { img: 'https://i.ibb.co/mhSnh53/banner.png' },
                             { img: 'https://i.ibb.co/mhSnh53/banner.png' }
                         ]}
                         autoPlay={true}
                         onClick={(item) => { console.log(item); }}
-                        closeIconColor="#fff"
                         preview={false}
                     />
                 </View>
@@ -98,6 +98,9 @@ const Dashboard = (props) => {
                         </Card>
                     </TouchableOpacity>
                 </View>
+                
+                
+                {/* Hardcoded Popular menu data */}
                 <Text style={{ alignSelf: 'flex-start', marginStart: 25, marginTop: 30, fontSize: 22, fontWeight: 'bold' }}>
                     Popular Menu
                 </Text>

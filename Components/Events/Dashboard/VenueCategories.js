@@ -71,7 +71,7 @@ const VenueCategories = (props) => {
                             <Back />
                         </View>
                     </TouchableRipple>
-                    <Text style={{ marginStart: 10, fontSize: 20 }}>Select Venue</Text>
+                    <Text style={{ marginStart: 10, fontSize: 20 }}>Venue Categories</Text>
                 </View>
                 <TouchableRipple onPress={() => { }} style={{ width: 40, height: 40, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }} borderless>
                     <Chat />
@@ -82,6 +82,7 @@ const VenueCategories = (props) => {
                 {data ?
                     <FlatList
                         data={data}
+                        showsVerticalScrollIndicator={false}
                         renderItem={(item) => {
                             return (
                                 <TouchableOpacity style={{
