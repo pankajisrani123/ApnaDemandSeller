@@ -3,7 +3,7 @@ import { Animated, Dimensions, FlatList, Image, ImageBackground, ScrollView, Toa
 
 import Back from '../../../Assets/Icons/Back.svg'
 import Chat from '../../../Assets/Icons/chat.svg'
-import { ActivityIndicator, Modal, Text, TouchableRipple } from "react-native-paper";
+import { ActivityIndicator, Button, Modal, Text, TouchableRipple } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
@@ -11,12 +11,24 @@ import Forward from '../../../Assets/Icons/forward.svg'
 import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
 import LinearGradient from "react-native-linear-gradient";
 
+import Down from '../../../Assets/Icons/arowdown.svg'
+
 const VenueCategories = (props) => {
 
     const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
     const [venueId, setVenueId] = useState("")
     const [tokenData, setTokenData] = useState("")
+    const [openId, setOpenId] = useState('')
+
+    const SetExpandable = (id) => {
+        // NavigateToCategories(id)
+        if (openId == id) {
+            setOpenId("")
+        } else {
+            setOpenId(id)
+        }
+    }
 
     const [data, setData] = useState()
 
@@ -73,13 +85,38 @@ const VenueCategories = (props) => {
                         renderItem={(item) => {
                             return (
                                 <TouchableOpacity style={{
-                                    flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 10, borderWidth: 2,
-                                    borderColor: '#FFCB40', height: 50, width: Dimensions.get('screen').width - 50, marginTop: 20, justifyContent: 'space-between'
+                                    backgroundColor: 'white', borderRadius: 10, borderWidth: 2,
+                                    borderColor: '#FFCB40', width: Dimensions.get('screen').width - 50, marginTop: 20
                                 }} activeOpacity={0.6} onPress={() => {
-                                    NavigateToCategories(item.item.id)
+                                    SetExpandable(item.item.id)
                                 }}>
-                                    <Text style={{ marginStart: 20, fontSize: 18 }}>{item.item.name}</Text>
-                                    <Forward style={{ marginEnd: 20 }} />
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }}>
+                                        <Text style={{ marginStart: 20, fontSize: 18 }}>{item.item.name}</Text>
+                                        {item.item.id == openId ?
+                                            <Down style={{ marginEnd: 20 }} />
+                                            :
+                                            <Forward style={{ marginEnd: 20, }} />}
+                                        {/* NavigateToCategories(id) */}
+                                    </View>
+                                    {item.item.id == openId ?
+                                        <View style={{}}>
+                                            <Text style={{
+                                                paddingTop: 10, paddingBottom: 5, paddingHorizontal: 20,
+                                                fontSize: 16, fontWeight: 'bold'
+                                            }}>Description:</Text>
+                                            <Text style={{ paddingHorizontal: 20, fontSize: 15, paddingBottom: 20 }}>
+                                                {item.item.description}
+                                            </Text>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                                                <View></View>
+                                                <Button style={{ marginEnd: 20, marginBottom: 10 }} onPress={() => { }} buttonColor="#FFCB40" textColor="white"
+                                                    labelStyle={{ padding: 5 }}>
+                                                    Open
+                                                </Button>
+                                            </View>
+                                        </View>
+                                        :
+                                        null}
                                 </TouchableOpacity>
                             )
                         }} />

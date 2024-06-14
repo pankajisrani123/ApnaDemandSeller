@@ -3,17 +3,17 @@ import { Animated, Dimensions, FlatList, Image, ImageBackground, ScrollView, Toa
 
 import Back from '../../../Assets/Icons/Back.svg'
 import Chat from '../../../Assets/Icons/chat.svg'
-import { Text, TouchableRipple } from "react-native-paper";
+import { Button, Text, TouchableRipple } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 import Forward from '../../../Assets/Icons/forward.svg'
+import Down from '../../../Assets/Icons/arowdown.svg'
 
 const SelectVenue = (props) => {
 
-
-
     const [categoryData, setCategoryData] = useState()
+    const [openId, setOpenId] = useState('')
 
     const GetVenues = async () => {
         const token = await AsyncStorage.getItem('token')
@@ -58,10 +58,19 @@ const SelectVenue = (props) => {
 
     const [authorized, setAuthorized] = useState(false)
 
+    const SetExpandable = (id) => {
+        // NavigateToCategories(id)
+        if (openId == id) {
+            setOpenId("")
+        } else {
+            setOpenId(id)
+        }
+    }
+
 
     useEffect(() => {
         GetVenues()
-    }, [!data, categoryData])
+    }, [!data])
 
     return (
         <View style={{ flex: 1, alignItems: 'center', padding: 10 }}>
@@ -70,7 +79,7 @@ const SelectVenue = (props) => {
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    
+
                     <Text style={{ marginStart: 10, fontSize: 20 }}>Select Venue</Text>
                 </View>
                 <TouchableRipple onPress={() => { }} style={{ width: 40, height: 40, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }} borderless>
@@ -82,16 +91,42 @@ const SelectVenue = (props) => {
                 {data ?
                     <FlatList
                         data={data}
+                        contentContainerStyle={{ paddingBottom: 300 }}
                         renderItem={(item) => {
                             return (
                                 <TouchableOpacity style={{
-                                    flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 10, borderWidth: 2,
-                                    borderColor: '#FFCB40', height: 50, width: Dimensions.get('screen').width - 50, marginTop: 20, justifyContent: 'space-between'
+                                    backgroundColor: 'white', borderRadius: 10, borderWidth: 2,
+                                    borderColor: '#FFCB40', width: Dimensions.get('screen').width - 50, marginTop: 20
                                 }} activeOpacity={0.6} onPress={() => {
-                                    NavigateToCategories(item.item.id)
+                                    SetExpandable(item.item.id)
                                 }}>
-                                    <Text style={{ marginStart: 20, fontSize: 18 }}>{item.item.name}</Text>
-                                    <Forward style={{ marginEnd: 20 }} />
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }}>
+                                        <Text style={{ marginStart: 20, fontSize: 18 }}>{item.item.name}</Text>
+                                        {item.item.id == openId ?
+                                            <Down style={{ marginEnd: 20 }} />
+                                            :
+                                            <Forward style={{ marginEnd: 20, }} />}
+                                        {/* NavigateToCategories(id) */}
+                                    </View>
+                                    {item.item.id == openId ?
+                                        <View style={{}}>
+                                            <Text style={{
+                                                paddingTop: 10, paddingBottom: 5, paddingHorizontal: 20,
+                                                fontSize: 16, fontWeight: 'bold'
+                                            }}>Description:</Text>
+                                            <Text style={{ paddingHorizontal: 20, fontSize: 15, paddingBottom: 20 }}>
+                                                {item.item.description}
+                                            </Text>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                                                <View></View>
+                                                <Button style={{ marginEnd: 20, marginBottom: 10 }} onPress={() => { NavigateToCategories(item.item.id) }} buttonColor="#FFCB40" textColor="white"
+                                                    labelStyle={{ padding: 5 }}>
+                                                    Open
+                                                </Button>
+                                            </View>
+                                        </View>
+                                        :
+                                        null}
                                 </TouchableOpacity>
                             )
                         }} />

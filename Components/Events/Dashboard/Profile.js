@@ -26,24 +26,22 @@ const Profile = (props) => {
         })
     }
 
-    const [data, setData] = useState({})
+    const [data, setData] = useState(null)
 
     const GetProfile = async (tokenData) => {
         await axios.get('https://apnademand.com/api/venue/get-profile', {
             headers: {
                 Authorization: `Bearer ${tokenData}`,
             },
-        }).then((res) => {
-            if (res) {
-                if (res.data.status) {
-                    setData(res.data.user_details)
-                    GetLocations()
-                } else {
-                    ToastAndroid.SHORT("Authorization error", ToastAndroid.SHORT)
-                }
+        }).then(async (res) => {
+
+            if (res.data.status) {
+                setData(res.data.user_details)
+
             } else {
-                ToastAndroid.show("Fetching data error, Try again!", ToastAndroid.SHORT)
+                ToastAndroid.SHORT("Authorization error", ToastAndroid.SHORT)
             }
+
         }).catch((err) => {
             console.log(err);
         });
@@ -51,26 +49,30 @@ const Profile = (props) => {
     }
 
     const GetLocations = async () => {
-        if(data && data.buissness_loc){
-            await Geocoder.from(data.buissness_loc.latitude, data.buissness_loc.longitude)
-                .then(json => {
-                    setBusinessAddress(json.results[0].formatted_address)
-                })
-                .catch(error => console.warn(error));
-        }
+        await Geocoder.from(data.buissness_loc.latitude, data.buissness_loc.longitude)
+            .then(json => {
+                setBusinessAddress(json.results[0].formatted_address)
+            })
+            .catch(error => console.warn(error));
 
-        if(data && data.personal_loc){
-            await Geocoder.from(data.personal_loc.latitude, data.personal_loc.longitude)
-                .then(json => {
-                    setPersonalAddress(json.results[0].formatted_address)
-                })
-                .catch(error => console.warn(error));
-        }
+        await Geocoder.from(data.personal_loc.latitude, data.personal_loc.longitude)
+            .then(json => {
+                setPersonalAddress(json.results[0].formatted_address)
+            })
+            .catch(error => console.warn(error));
+
     }
 
     useEffect(() => {
         GetToken()
-    }, [])
+        if (data) {
+            GetLocations()
+        }
+        return () => {
+            console.log("unmounted");
+        }
+
+    }, [!data])
 
     return (
         <View style={{ flex: 1, alignItems: 'center', width: '100%', padding: 10 }}>
@@ -99,12 +101,17 @@ const Profile = (props) => {
                     :
                     null}
             </View>
-            <Text style={{ marginTop: 15, fontSize: 20, fontWeight: 'bold' }}>{data.name}</Text>
-            <TextInput label="Email" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 30 }} activeOutlineColor="#FFCB40" value={data.email} />
-            <TextInput label="Mobile Number" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 5 }} activeOutlineColor="#FFCB40" value={data.mobile_no} />
-            <TextInput label="Address" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 5 }} activeOutlineColor="#FFCB40" value={data.address} />
-            <TextInput label="Business Location" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 5 }} activeOutlineColor="#FFCB40" value={businessAddress}/>
-            <TextInput label="Personal Location" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 5 }} activeOutlineColor="#FFCB40" value={personalAddress}/>
+            {data ?
+                <>
+                    <Text style={{ marginTop: 15, fontSize: 20, fontWeight: 'bold' }}>{data.name}</Text>
+                    <TextInput label="Email" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 30 }} activeOutlineColor="#FFCB40" value={data.email} />
+                    <TextInput label="Mobile Number" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 5 }} activeOutlineColor="#FFCB40" value={data.mobile_no} />
+                    <TextInput label="Address" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 5 }} activeOutlineColor="#FFCB40" value={data.address} />
+                    <TextInput label="Business Location" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 5 }} activeOutlineColor="#FFCB40" value={businessAddress} />
+                    <TextInput label="Personal Location" mode="outlined" style={{ width: '80%', height: 40, backgroundColor: '#f6f6f6', marginTop: 5 }} activeOutlineColor="#FFCB40" value={personalAddress} />
+                </>
+                :
+                <Text>N/A</Text>}
         </View>
     )
 }
