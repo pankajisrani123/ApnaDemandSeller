@@ -2,9 +2,9 @@ import react, { useEffect, useState } from 'react'
 import { ActivityIndicator, Dimensions, Image, ScrollView, ToastAndroid, View } from 'react-native'
 import { Button, Modal, Portal, Text } from 'react-native-paper'
 
-import Delivery from '../Assets/Images/delivery.svg'
-import Objects from '../Assets/Images/objects.svg'
+
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { ImageSlider } from 'react-native-image-slider-banner'
 
 const screenHeight = Dimensions.get('screen').height
 const screenWidth = Dimensions.get('screen').width
@@ -41,36 +41,24 @@ const LandingPage = (props) => {
             contentContainerStyle={{ alignItems: 'center', }}>
             <View style={{ flex: 1, alignItems: 'center' }}>
                 <Image source={require("../Assets/Applogo/Apnademandlogo.png")} />
-                <ScrollView horizontal={true} style={{ flex: 1, marginVertical: 25 }}
-                    showsHorizontalScrollIndicator={false} onScroll={(px) => {
-                        if (px.nativeEvent.contentOffset.x.toString() >= screenWidth) {
-                            setCircle1("lightgray")
-                            setCircle2("#FFCB40")
-                            setCircle3("lightgray")
-                        }
-                        if (px.nativeEvent.contentOffset.x.toString() >= screenWidth * 2) {
-                            setCircle1("lightgray")
-                            setCircle3("#FFCB40")
-                            setCircle2("lightgray")
-                        }
-                        if (px.nativeEvent.contentOffset.x.toString() < screenWidth) {
-                            setCircle2("lightgray")
-                            setCircle1("#FFCB40")
-                            setCircle3("lightgray")
-                        }
-                    }}
-                    contentContainerStyle={{ alignItems: 'center' }}>
-                    <Image source={require("../Assets/Images/LandingPageImage.jpg")} style={{
+                
+                    
+                    {/* <Image source={require("../Assets/Images/LandingPageImage.jpg")} style={{
                         width: screenWidth, height: 280
-                    }} />
-                    <Delivery width={screenWidth} height={280} />
-                    <Objects width={screenWidth} height={280} />
-                </ScrollView>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={{ width: 10, height: 10, backgroundColor: circle1, borderRadius: 20 }} />
-                    <View style={{ width: 10, height: 10, backgroundColor: circle2, borderRadius: 20, marginStart: 5 }} />
-                    <View style={{ width: 10, height: 10, backgroundColor: circle3, borderRadius: 20, marginStart: 5 }} />
-                </View>
+                    }} /> */}
+                    <ImageSlider
+                    data={[
+                        { img: 'https://i.ibb.co/QJH1fwf/Landing-Page-Image.webp' },
+                        { img: 'https://i.ibb.co/7ghQWQt/delivery.webp'},
+                        { img: 'https://i.ibb.co/n3rcP4t/objects.webp' }
+                    ]}
+                    onItemChanged={(item)=>{
+                    }}
+                    activeIndicatorStyle={{backgroundColor:"#FFCB40"}}
+                    preview={false}
+                    />
+                    
+                
             </View>
             <View style={{ marginTop: 25, flex: 1, justifyContent: 'space-between', flexDirection: 'column', alignItems: 'center', marginBottom: 50 }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Get Started With Apna Demand!</Text>
