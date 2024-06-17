@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Card, Portal } from 'react-native-paper';
 
@@ -11,38 +11,76 @@ import Profile from '../../Assets/Icons/profile.svg'
 const BottomNavigationBar = ({ navigation }) => {
 
   const [selection, setSelection] = useState(1)
+  const [hidden, setHidden] = useState(false)
+
+  const HideBottomBar = () => {
+    setSelection(3)
+    navigation.navigate("SelectVenue")
+  }
+
+  const HandleNav = () => {
+    const nav = navigation.getState()
+    if (nav.routes[nav.index].name === "SelectVenue") {
+      setHidden(true)
+      setSelection(3)
+    }
+
+    else if (nav.routes[nav.index].name === "Dashboard") {
+      setSelection(1)
+      setHidden(false)
+    }
+    else if (nav.routes[nav.index].name === "Profile") {
+      setSelection(4)
+      setHidden(false)
+    }
+    else{
+      setHidden(true)
+    }
+  }
+
+  useEffect(() => {
+
+    // console.log(nav.routes);
+    setInterval(HandleNav, 1500)
+  },[])
 
   return (
-    <Portal>
-      <Card style={styles.card}>
-        <View style={styles.container}>
-          <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 1 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
-            onPress={() => {
-              setSelection(1)
-              navigation.navigate("Dashboard")
-            }} activeOpacity={0.6}>
-            <Home />
-          </TouchableOpacity>
-          <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 2 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
-            onPress={() => { setSelection(2) }} activeOpacity={0.6}>
-            <Wallet />
-          </TouchableOpacity>
-          <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 3 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
-            onPress={() => {
-              setSelection(3)
-              navigation.navigate("SelectVenue")
-              
-            }} activeOpacity={0.6}>
-            <Cart />
-          </TouchableOpacity>
-          <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 4 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
-            onPress={() => { setSelection(4)
-              navigation.navigate("Profile") }} activeOpacity={0.6}>
-            <Profile />
-          </TouchableOpacity>
-        </View>
-      </Card>
-    </Portal>
+    <View>
+      {hidden ?
+        null
+        :
+        <Portal>
+          <Card style={styles.card}>
+            <View style={styles.container}>
+              <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 1 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => {
+                  setSelection(1)
+                  navigation.navigate("Dashboard")
+                }} activeOpacity={0.6}>
+                <Home />
+              </TouchableOpacity>
+              <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 2 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => { setSelection(2) }} activeOpacity={0.6}>
+                <Wallet />
+              </TouchableOpacity>
+              <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 3 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => {
+                  HideBottomBar()
+
+                }} activeOpacity={0.6}>
+                <Cart />
+              </TouchableOpacity>
+              <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 4 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => {
+                  setSelection(4)
+                  navigation.navigate("Profile")
+                }} activeOpacity={0.6}>
+                <Profile />
+              </TouchableOpacity>
+            </View>
+          </Card>
+        </Portal>}
+    </View>
   );
 };
 

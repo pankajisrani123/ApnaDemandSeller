@@ -19,6 +19,7 @@ import Dashboard from './Components/Events/Dashboard/Dashboard';
 import SelectVenue from './Components/Events/Dashboard/SelectVenue';
 import VenueCategories from './Components/Events/Dashboard/VenueCategories';
 import Profile from './Components/Events/Dashboard/Profile';
+import AddDetails from './Components/Events/AddDetails/AddDetails';
 
 
 
@@ -110,6 +111,7 @@ const App = () => {
                     <Stack.Screen name='SelectVenue' component={SelectVenue} />
                     <Stack.Screen name='VenueCategories' component={VenueCategories} />
                     <Stack.Screen name='Profile' component={Profile} />
+                    <Stack.Screen name='AddDetails' component={AddDetails} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
