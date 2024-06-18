@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, View } from "react-native";
+import { Image, ScrollView, View } from "react-native";
 import { Button, Text, TouchableRipple } from "react-native-paper";
 
 import Uncheck from '../../../Assets/Icons/circle_uncheck.svg'
@@ -7,13 +7,21 @@ import Check from '../../../Assets/Icons/circle_check.svg'
 
 import Back from '../../../Assets/Icons/Back.svg'
 import Chat from '../../../Assets/Icons/chat.svg'
+import Add from '../../../Assets/Icons/add.svg'
+import {ImagePicker, launchImageLibrary} from "react-native-image-picker";
+
 
 const AddDetails = (props) => {
 
     const [selectedTab, setSelectedTab] = useState([1])
 
+    const SelectAndUploadImage = async() =>{
+        launchImageLibrary()
+        
+    }
+
     return (
-        <View style={{ flex: 1, alignItems: "center", padding: 10, flex: 1 }}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flex: 1, alignItems: "center", padding: 10 }}>
 
             {/* App Background */}
             <View style={{ position: 'absolute' }}>
@@ -76,8 +84,19 @@ const AddDetails = (props) => {
                     </Text>
                 </View>
             </View>
+                        <Text style={{ marginTop:30}}>Cover Images Selected:- {`(Max limit is 8)`}</Text>
+            <TouchableRipple onPress={()=>{SelectAndUploadImage()}} borderless style={{borderRadius:20,marginTop:10}}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', width: 306, height: 204 }}>
+                    <Image source={require('../../../Assets/Images/pickbg.png')} style={{
+                        position: 'absolute', alignSelf: 'center',
+                        top: 0,
+                    }} />
+                    <Add />
+                    <Text style={{ fontSize: 25, marginTop: 20 }}>Add Image</Text>
+                </View>
+            </TouchableRipple>
 
-        </View>
+        </ScrollView>
     )
 }
 
