@@ -8,17 +8,56 @@ import Check from '../../../Assets/Icons/circle_check.svg'
 import Back from '../../../Assets/Icons/Back.svg'
 import Chat from '../../../Assets/Icons/chat.svg'
 import Add from '../../../Assets/Icons/add.svg'
-import {ImagePicker, launchImageLibrary} from "react-native-image-picker";
+import { ImagePicker, launchImageLibrary } from "react-native-image-picker";
 
 
 const AddDetails = (props) => {
 
     const [selectedTab, setSelectedTab] = useState([1])
 
-    const SelectAndUploadImage = async() =>{
-        launchImageLibrary()
-        
-    }
+    const SelectAndUploadImage = async () => {
+        launchImageLibrary({ mediaType: 'photo', quality: 0.6, selectionLimit: 8 }, (res) => {
+            if (res.didCancel) {
+                console.log('User cancelled image picker');
+            } else {
+                const imageFiles = res.assets.map(asset => {
+                    // Convert URI to Blob object
+                    return {
+                        uri: asset.uri,
+                        type: asset.type,
+                        name: asset.fileName
+                    };
+                });
+                console.log(imageFiles[0]);
+                UploadImageGetUrl(imageFiles);
+            }
+        });
+    };
+    
+    const UploadImageGetUrl = async (imageFiles) => {
+        const formData = new FormData();
+        formData.append('seller_id', 2); // Replace with actual seller_id
+        imageFiles.forEach((file, index) => {
+            formData.append(`images[${index}]`, file);
+        });
+    
+        const apiUrl = 'https://apnademand.com/api/venue/storeImages';
+    
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Response:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    };
 
     return (
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flex: 1, alignItems: "center", padding: 10 }}>
@@ -84,8 +123,8 @@ const AddDetails = (props) => {
                     </Text>
                 </View>
             </View>
-                        <Text style={{ marginTop:30}}>Cover Images Selected:- {`(Max limit is 8)`}</Text>
-            <TouchableRipple onPress={()=>{SelectAndUploadImage()}} borderless style={{borderRadius:20,marginTop:10}}>
+            <Text style={{ marginTop: 30 }}>Cover Images Selected:- {`(Max limit is 8)`}</Text>
+            <TouchableRipple onPress={() => { SelectAndUploadImage() }} borderless style={{ borderRadius: 20, marginTop: 10 }}>
                 <View style={{ alignItems: 'center', justifyContent: 'center', width: 306, height: 204 }}>
                     <Image source={require('../../../Assets/Images/pickbg.png')} style={{
                         position: 'absolute', alignSelf: 'center',
