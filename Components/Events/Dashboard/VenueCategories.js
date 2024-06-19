@@ -193,7 +193,7 @@ const VenueCategories = (props) => {
                     null}
 
             </View>
-            <View style={{ position: 'absolute', bottom: 120, width: '90%' }}>
+            <View style={{ position: 'absolute', bottom: 50, width: '90%' }}>
                 <Button mode="contained" onPress={() => NavigateToAddImages()} style={{ backgroundColor: '#FFCB40' }}>
                     Continue
                 </Button>

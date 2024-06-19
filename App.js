@@ -97,7 +97,7 @@ const App = () => {
     return (
         <PaperProvider>
             <NavigationContainer>
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Navigator screenOptions={{ headerShown: false, orientation:'portrait'}} >
                     <Stack.Screen name="LandingPage" component={LandingPage} />
                     <Stack.Screen name="SellerLogin" component={SellerLogin} />
                     <Stack.Screen name="EventLogin" component={EventLogin} />
