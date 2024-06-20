@@ -54,6 +54,12 @@ const AddDetails = (props) => {
         )
     }
 
+    const [selectedOptions, setSelectedOptions] = useState({});
+
+    const handleSelect = (questionId, option) => {
+        setSelectedOptions({ ...selectedOptions, [questionId]: option });
+    };
+
     const BasicDetails = () => {
         const quesData = [
             { id: 1, ques: 'Is Parking Available?', options: ['There is Sufficient Parking Available', 'Parking Is Available near the venue', 'No Parking available'] },
@@ -63,11 +69,7 @@ const AddDetails = (props) => {
             { id: 5, ques: 'Please Describe Your Cancellation Policy', options: ['Partial Refund Offered', 'No Refund Offered', 'No Refund Offered However Date Adjustment Can Be Done', 'Full Refund Offered'] },
         ];
 
-        const [selectedOptions, setSelectedOptions] = useState({});
-
-        const handleSelect = (questionId, option) => {
-            setSelectedOptions({ ...selectedOptions, [questionId]: option });
-        };
+        
 
         return (
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
@@ -126,6 +128,13 @@ const AddDetails = (props) => {
             </ScrollView>
         )
     }
+
+    const [selectedOptionsVariant, setSelectedOptionsVariant] = useState({});
+
+        const handleSelectVariant = (questionId, option) => {
+            setSelectedOptionsVariant({ ...selectedOptionsVariant, [questionId]: option });
+        };
+
     const AddVariant = () => {
         const quesData = [
             { id: 1, ques: 'Banquet Halls', options: ['4 A/C Rooms', '100 Bike Parking', '10 Four Wheeler Parkings'] },
@@ -133,11 +142,7 @@ const AddDetails = (props) => {
             { id: 3, ques: 'Veg', options: ['Veg Manchurian', 'Veg Manchurian 1', 'Veg Manchurian 2', 'Veg Manchurian 3', 'Veg Manchurian 4', 'Veg Manchurian 5'] },
         ];
 
-        const [selectedOptions, setSelectedOptions] = useState({});
-
-        const handleSelect = (questionId, option) => {
-            setSelectedOptions({ ...selectedOptions, [questionId]: option });
-        };
+        
 
         return (
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
@@ -151,7 +156,7 @@ const AddDetails = (props) => {
                                 backgroundColor: 'white', borderRadius: 10
                             }} />
                         </View>
-                        <RadioButton.Group onValueChange={(value) => handleSelect(item.id, value)} value={selectedOptions[item.id]}>
+                        <RadioButton.Group onValueChange={(value) => handleSelectVariant(item.id, value)} value={selectedOptionsVariant[item.id]}>
                             {item.options.map((option, index) => (
                                 <View key={index} style={styles.radioButtonContainer}>
                                     <RadioButton value={option} color="#FF5722" />
@@ -161,8 +166,8 @@ const AddDetails = (props) => {
                         </RadioButton.Group>
                     </View>
                 ))}
-                <Text style={{marginVertical:5, fontWeight:'bold', fontSize:16}}>Description</Text>
-                <TextInput style={{borderColor:'#FFCB40', borderWidth:1,width:'80%', height:100, backgroundColor:'white'}}/>
+                <Text style={{ marginVertical: 5, fontWeight: 'bold', fontSize: 16 }}>Description</Text>
+                <TextInput style={{ borderColor: '#FFCB40', borderWidth: 1, width: '80%', height: 100, backgroundColor: 'white' }} />
             </ScrollView>
         );
     }
@@ -250,7 +255,7 @@ const AddDetails = (props) => {
             <Button buttonColor="#FFCB40" labelStyle={{ paddingVertical: 8 }} style={{ width: '80%', marginVertical: 10 }}
                 textColor="white" onPress={() => {
                     if (selectedTab == 4) {
-
+                        setSelectedTab(1)
                     } else {
                         setSelectedTab(selectedTab + 1)
                     }
