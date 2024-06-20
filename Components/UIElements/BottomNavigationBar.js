@@ -66,7 +66,6 @@ const BottomNavigationBar = ({ navigation }) => {
               <TouchableOpacity style={{ width: 50, height: 50, borderRadius: 55, backgroundColor: selection == 3 ? "#FFCB40" : 'transparent', alignItems: 'center', justifyContent: 'center' }}
                 onPress={() => {
                   HideBottomBar()
-
                 }} activeOpacity={0.6}>
                 <Cart />
               </TouchableOpacity>
