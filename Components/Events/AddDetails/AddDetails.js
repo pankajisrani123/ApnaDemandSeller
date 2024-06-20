@@ -21,6 +21,7 @@ const AddDetails = (props) => {
                     type: asset.type,
                     name: asset.fileName
                 }));
+                setImages([])
                 setLoading(true)
                 UploadImageGetUrl(selectedImages);
             }
@@ -224,8 +225,15 @@ const AddDetails = (props) => {
     };
 
     const renderImages = ({ item }) => (
-        <TouchableOpacity onPress={() => handleImageClick(item)} style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <TouchableOpacity onPress={() => handleImageClick(item)} style={{ alignItems: 'center', justifyContent: 'center' }}
+        activeOpacity={0.7}>
             <Image source={{ uri: item }} style={styles.image} />
+            <TouchableOpacity style={{position:'absolute', top:20, right:20,
+                backgroundColor: 'darkgray', width:30, height:30, borderRadius:15,
+                alignItems:'center', justifyContent:'center', opacity:0.6
+            }}>
+                <Text style={{fontWeight:'bold', fontSize:20, marginBottom:5,}}>x</Text>
+            </TouchableOpacity>
         </TouchableOpacity>
     );
 
@@ -370,7 +378,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderWidth: 1,
         margin: 15,
-        borderColor: 'white'
+        borderColor: 'white',
     },
     container: {
         padding: 16,
