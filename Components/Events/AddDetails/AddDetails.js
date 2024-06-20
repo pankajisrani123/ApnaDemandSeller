@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, ScrollView, View, TouchableOpacity, FlatList, StyleSheet, Dimensions, TextInput } from "react-native";
+import { Image, ScrollView, View, TouchableOpacity, FlatList, StyleSheet, Dimensions, TextInput, ToastAndroid } from "react-native";
 import { Button, RadioButton, Text, TouchableRipple } from "react-native-paper";
 import Uncheck from '../../../Assets/Icons/circle_uncheck.svg'
 import Check from '../../../Assets/Icons/circle_check.svg'
@@ -255,7 +255,8 @@ const AddDetails = (props) => {
             <Button buttonColor="#FFCB40" labelStyle={{ paddingVertical: 8 }} style={{ width: '80%', marginVertical: 10 }}
                 textColor="white" onPress={() => {
                     if (selectedTab == 4) {
-                        setSelectedTab(1)
+                        ToastAndroid.show("Details added successfully", ToastAndroid.SHORT)
+                        props.navigation.goBack()
                     } else {
                         setSelectedTab(selectedTab + 1)
                     }
