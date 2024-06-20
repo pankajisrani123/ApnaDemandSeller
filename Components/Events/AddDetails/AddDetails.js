@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { Image, ScrollView, View, TouchableOpacity, FlatList, StyleSheet, Dimensions, TextInput, ToastAndroid } from "react-native";
 import { ActivityIndicator, Button, RadioButton, Text, TouchableRipple } from "react-native-paper";
 import Uncheck from '../../../Assets/Icons/circle_uncheck.svg'
@@ -218,23 +218,34 @@ const AddDetails = (props) => {
             console.error('Error uploading images:', error);
         }
     };
+    const forceReducer = state => !state;
+    const [, forceRerender] = useReducer(forceReducer, false);
 
     const handleImageClick = (image) => {
-        console.log('Image clicked:', image);
-        // Navigate or perform action when an image is clicked
+        const index = images.indexOf(image)
+        var img = images
+        if (index > -1) {
+            img.splice(index, 1)
+        }
+        setImages(img)
+        forceRerender()
+        
     };
 
+    
+
     const renderImages = ({ item }) => (
-        <TouchableOpacity onPress={() => handleImageClick(item)} style={{ alignItems: 'center', justifyContent: 'center' }}
-        activeOpacity={0.7}>
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}
+            activeOpacity={0.7}>
             <Image source={{ uri: item }} style={styles.image} />
-            <TouchableOpacity style={{position:'absolute', top:20, right:20,
-                backgroundColor: 'darkgray', width:30, height:30, borderRadius:15,
-                alignItems:'center', justifyContent:'center', opacity:0.6
-            }}>
-                <Text style={{fontWeight:'bold', fontSize:20, marginBottom:5,}}>x</Text>
+            <TouchableOpacity style={{
+                position: 'absolute', top: 20, right: 20,
+                backgroundColor: 'darkgray', width: 30, height: 30, borderRadius: 15,
+                alignItems: 'center', justifyContent: 'center', opacity: 0.6
+            }} onPress={() => { handleImageClick(item) }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 5, }}>x</Text>
             </TouchableOpacity>
-        </TouchableOpacity>
+        </View>
     );
 
     return (
@@ -385,7 +396,7 @@ const styles = StyleSheet.create({
     },
     questionContainer: {
         marginBottom: 24,
-        width:Dimensions.get('window').width
+        width: Dimensions.get('window').width
     },
     question: {
         fontSize: 16,
