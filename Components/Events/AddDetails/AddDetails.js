@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Image, ScrollView, View, TouchableOpacity, FlatList, StyleSheet, Dimensions, TextInput, ToastAndroid } from "react-native";
-import { Button, RadioButton, Text, TouchableRipple } from "react-native-paper";
+import { ActivityIndicator, Button, RadioButton, Text, TouchableRipple } from "react-native-paper";
 import Uncheck from '../../../Assets/Icons/circle_uncheck.svg'
 import Check from '../../../Assets/Icons/circle_check.svg'
 import Back from '../../../Assets/Icons/Back.svg'
 import Chat from '../../../Assets/Icons/chat.svg'
 import Add from '../../../Assets/Icons/add.svg'
 import { launchImageLibrary } from "react-native-image-picker";
+import axios from "axios";
 
 const AddDetails = (props) => {
     const [selectedTab, setSelectedTab] = useState(1);
@@ -20,10 +21,13 @@ const AddDetails = (props) => {
                     type: asset.type,
                     name: asset.fileName
                 }));
+                setLoading(true)
                 UploadImageGetUrl(selectedImages);
             }
         });
     };
+
+    const [loading, setLoading] = useState(false)
 
     const AddImages = () => {
         return (
@@ -37,7 +41,7 @@ const AddDetails = (props) => {
                     </View>
                 </TouchableRipple>
 
-                {images.length > 0 && (
+                {images.length > 0 ? (
                     <FlatList
                         data={images}
                         horizontal={false}
@@ -47,7 +51,15 @@ const AddDetails = (props) => {
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={styles.imageGrid}
                     />
-                )}
+                )
+                    :
+                    <View style={{ marginTop: 50 }}>
+                        {loading ?
+                            <ActivityIndicator size={30} color="#FFCB40" />
+                            :
+                            <Text>Select Images to Continue</Text>
+                        }
+                    </View>}
 
 
             </ScrollView>
@@ -60,28 +72,31 @@ const AddDetails = (props) => {
         setSelectedOptions({ ...selectedOptions, [questionId]: option });
     };
 
-    const BasicDetails = () => {
-        const quesData = [
-            { id: 1, ques: 'Is Parking Available?', options: ['There is Sufficient Parking Available', 'Parking Is Available near the venue', 'No Parking available'] },
-            { id: 2, ques: 'Please Describe Your Cancellation Policy', options: ['Partial Refund Offered', 'No Refund Offered', 'No Refund Offered However Date Adjustment Can Be Done', 'Full Refund Offered'] },
-            { id: 3, ques: 'Please Describe Your Cancellation Policy', options: ['Partial Refund Offered', 'No Refund Offered', 'No Refund Offered However Date Adjustment Can Be Done', 'Full Refund Offered'] },
-            { id: 4, ques: 'Please Describe Your Cancellation Policy', options: ['Partial Refund Offered', 'No Refund Offered', 'No Refund Offered However Date Adjustment Can Be Done', 'Full Refund Offered'] },
-            { id: 5, ques: 'Please Describe Your Cancellation Policy', options: ['Partial Refund Offered', 'No Refund Offered', 'No Refund Offered However Date Adjustment Can Be Done', 'Full Refund Offered'] },
-        ];
+    const [quesData, setQuesData] = useState(null)
 
-        
+    const FetchQuestions = async () => {
+        const res = await axios.get('https://apnademand.com/api/venue/questions')
+        setQuesData(res.data)
+        console.log(quesData);
+    }
+
+    useEffect(() => {
+        FetchQuestions();
+    }, [!quesData])
+
+    const BasicDetails = () => {
 
         return (
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
                 {quesData.map((item) => (
 
                     <View key={item.id} style={styles.questionContainer}>
-                        <Text style={styles.question}>{item.ques}</Text>
+                        <Text style={styles.question}>{item.text}</Text>
                         <RadioButton.Group onValueChange={(value) => handleSelect(item.id, value)} value={selectedOptions[item.id]}>
                             {item.options.map((option, index) => (
                                 <View key={index} style={styles.radioButtonContainer}>
-                                    <RadioButton value={option} color="#FF5722" />
-                                    <Text style={styles.optionText}>{option}</Text>
+                                    <RadioButton value={option.text} color="#FF5722" />
+                                    <Text style={styles.optionText}>{option.text}</Text>
                                 </View>
                             ))}
                         </RadioButton.Group>
@@ -131,9 +146,9 @@ const AddDetails = (props) => {
 
     const [selectedOptionsVariant, setSelectedOptionsVariant] = useState({});
 
-        const handleSelectVariant = (questionId, option) => {
-            setSelectedOptionsVariant({ ...selectedOptionsVariant, [questionId]: option });
-        };
+    const handleSelectVariant = (questionId, option) => {
+        setSelectedOptionsVariant({ ...selectedOptionsVariant, [questionId]: option });
+    };
 
     const AddVariant = () => {
         const quesData = [
@@ -142,7 +157,7 @@ const AddDetails = (props) => {
             { id: 3, ques: 'Veg', options: ['Veg Manchurian', 'Veg Manchurian 1', 'Veg Manchurian 2', 'Veg Manchurian 3', 'Veg Manchurian 4', 'Veg Manchurian 5'] },
         ];
 
-        
+
 
         return (
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
@@ -194,6 +209,7 @@ const AddDetails = (props) => {
             if (data.images) {
                 setImages(data.images); // Assuming API returns array of image URLs
                 console.log(data.images);
+                setLoading(false)
             } else {
                 console.error('Error uploading images:', data);
             }
@@ -361,6 +377,7 @@ const styles = StyleSheet.create({
     },
     questionContainer: {
         marginBottom: 24,
+        width:Dimensions.get('window').width
     },
     question: {
         fontSize: 16,
