@@ -7,7 +7,7 @@ const TextField = (props) => {
 
     const [focused, setFocused] = useState(false)
 
-    const { label, placeholder, value, onChangeText, inputMode, password } = props;
+    const { label, placeholder, value, onChangeText, inputMode, password, maxLength } = props;
 
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', width: screenWidth - screenWidth / 4, borderWidth: 2, paddingHorizontal: 10, borderRadius: 10,
@@ -21,7 +21,8 @@ const TextField = (props) => {
                 onBlur={()=>{setFocused(false)}}
                 cursorColor="#FFCB40" 
                 inputMode={inputMode}
-                secureTextEntry={password}/>
+                secureTextEntry={password}
+                maxLength={maxLength}/>
         </View>
     );
 }

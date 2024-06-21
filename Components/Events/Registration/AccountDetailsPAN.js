@@ -23,13 +23,14 @@ const AccountDetailsPAN = (props) => {
 
     const [panNumber, setPanNumber] = useState("")
     const [aadharNumber, setAadharNumber] = useState("")
+    const [flow, setFlow] = useState("")
 
 
     const NavigateToBankDetails = () => {
         if (radioSelection == '1') {
             if (panNumber) {
                 if (panNumber.length == 10) {
-                    props.navigation.navigate("BankDetails", { email: email, mob: mob, password: password, taxGST: taxGST, gstin : gstin, enrollmentNo: enrollmentNo, taxPAN: "pan", pan: panNumber })
+                    props.navigation.navigate("BankDetails", { email: email, mob: mob, password: password, taxGST: taxGST, gstin : gstin, enrollmentNo: enrollmentNo, taxPAN: "pan", pan: panNumber, flow:flow})
                 } else {
                     Alert.alert("Error", "Incorrect Pan format, please try again!")
                 }
@@ -39,7 +40,7 @@ const AccountDetailsPAN = (props) => {
         } else {
             if (aadharNumber) {
                 if (aadharNumber.length == 12) {
-                    props.navigation.navigate("BankDetails", { email: email, mob: mob, password: password, taxGST: taxGST, gstin : gstin, enrollmentNo: enrollmentNo, taxPAN: "aadhar", aadhar: aadharNumber })
+                    props.navigation.navigate("BankDetails", { email: email, mob: mob, password: password, taxGST: taxGST, gstin : gstin, enrollmentNo: enrollmentNo, taxPAN: "aadhar", aadhar: aadharNumber, flow:flow })
                 } else {
                     Alert.alert("Error", 'Incorrect Aadhar format, please try again!')
                 }
@@ -50,7 +51,7 @@ const AccountDetailsPAN = (props) => {
     }
 
     const SkipProcess = () => {
-        props.navigation.navigate("BankDetails", { email: email, mob: mob, password: password, taxGST: taxGST, gstin : gstin, enrollmentNo: enrollmentNo, taxPAN: "" })
+        props.navigation.navigate("BankDetails", { email: email, mob: mob, password: password, taxGST: taxGST, gstin : gstin, enrollmentNo: enrollmentNo, taxPAN: "", flow:flow })
     }
 
     useEffect(() => {
@@ -59,6 +60,7 @@ const AccountDetailsPAN = (props) => {
         setMob(props.route.params.mob)
         setPassword(props.route.params.password)
         setTaxGST(props.route.params.taxGST)
+        setFlow(props.route.params.flow)
 
         if (props.route.params.taxGST) {
             if (props.route.params.taxGST == "gstin") {

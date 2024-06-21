@@ -139,7 +139,7 @@ const EventLogin = (props) => {
                         }}>Login</Button>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text>New User?</Text>
-                        <Button onPress={() => { props.navigation.navigate("EventRegister") }} textColor='#4d59ff' style={{ paddingHorizontal: -10 }}>Register Here</Button>
+                        <Button onPress={() => { props.navigation.navigate("EventRegister", {flow:'event'}) }} textColor='#4d59ff' style={{ paddingHorizontal: -10 }}>Register Here</Button>
                     </View>
                 </View>
             </View>

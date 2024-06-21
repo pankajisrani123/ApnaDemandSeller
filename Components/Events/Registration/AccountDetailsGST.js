@@ -17,19 +17,20 @@ const AccountDetailsGST = (props) => {
 
     const [gstin, setGstin] = useState("")
     const [enrollmentNo, setEnrollmentNo] = useState("")
+    const [flow, setFlow] = useState("")
 
     const [radioSelection, setRadioSelection] = useState("1")
 
     const NavigateToPan = () => {
         if (radioSelection == '1') {
             if (gstin && gstin.length == 15) {
-                props.navigation.navigate("AccountDetailsPAN", { email: email, mob: mob, password: password, gstin: gstin, taxGST: "gstin" })
+                props.navigation.navigate("AccountDetailsPAN", { email: email, mob: mob, password: password, gstin: gstin, taxGST: "gstin", flow:flow })
             } else {
                 Alert.alert("Error", "Please fill required fields");
             }
         } else {
             if (enrollmentNo) {
-                props.navigation.navigate("AccountDetailsPAN", { email: email, mob: mob, password: password, enrollmentNo: enrollmentNo, taxGST: "enrollment" })
+                props.navigation.navigate("AccountDetailsPAN", { email: email, mob: mob, password: password, enrollmentNo: enrollmentNo, taxGST: "enrollment", flow:flow })
             } else {
                 Alert.alert("Error", "Please fill required fields");
             }
@@ -37,7 +38,7 @@ const AccountDetailsGST = (props) => {
     }
 
     const SkipProcess = () => {
-        props.navigation.navigate("BankDetails", { email: email, mob: mob, password: password, taxGST: "" })
+        props.navigation.navigate("BankDetails", { email: email, mob: mob, password: password, taxGST: "", flow:flow })
     }
 
     useEffect(() => {
@@ -45,6 +46,7 @@ const AccountDetailsGST = (props) => {
         setEmail(props.route.params.email)
         setMob(props.route.params.mob)
         setPassword(props.route.params.password)
+        setFlow(props.route.params.flow)
     }, [])
     return (
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flex: 1, alignItems: 'center', padding: 15 }}>

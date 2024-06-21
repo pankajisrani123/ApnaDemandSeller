@@ -40,13 +40,14 @@ const PickupAddress = (props) => {
     const [bankMethod, setBankMethod] = useState('')
 
     const [upiId, setUpiId] = useState('')
+    const [flow, setFlow] = useState('')
 
     const NavigateToPartnerDetails = () => {
         if (businessName && businessLatitude && businessLongitude) {
             props.navigation.navigate('PartnerDetails', {
                 email: email, mob: mob, password: password, taxGST: taxGST, gstin: gstin, enrollmentNo: enrollmentNo, taxPAN: taxPAN, pan: pan, aadhar: aadhar,
                 holderName: holderName, accountNumber: accountNumber, ifscCode: ifscCode, branch: branch, bank: bank, bankMethod: bankMethod, upiId: upiId, businessName: businessName,
-                businessLatitude: businessLatitude, businessLongitude: businessLongitude
+                businessLatitude: businessLatitude, businessLongitude: businessLongitude, flow:flow
             })
         } else {
             Alert.alert("Error", "Please fill all the required details")
@@ -96,6 +97,7 @@ const PickupAddress = (props) => {
         setTaxGST(props.route.params.taxGST)
         setTaxPAN(props.route.params.taxPAN)
         setBankMethod(props.route.params.bankMethod)
+        setFlow(props.route.params.flow)
 
         if (props.route.params.taxGST) {
             if (props.route.params.taxGST == "gstin") {

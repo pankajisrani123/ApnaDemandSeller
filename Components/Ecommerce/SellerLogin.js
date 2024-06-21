@@ -67,7 +67,9 @@ const SellerLogin = (props) => {
                     textColor='black' labelStyle={{ paddingVertical: 5 }} onPress={() => []}>Login</Button>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text>New User?</Text>
-                    <Button onPress={() => { }} textColor='#4d59ff' style={{ paddingHorizontal: -10 }}>Register Here</Button>
+                    <Button onPress={() => { 
+                        props.navigation.navigate("EventRegister", {flow:'ecommerce'})
+                    }} textColor='#4d59ff' style={{ paddingHorizontal: -10 }}>Register Here</Button>
                 </View>
             </View>
         </ScrollView>

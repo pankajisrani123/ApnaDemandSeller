@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Image, ImageBackground, ScrollView, View } from "react-native";
 import TextField from "../../UIElements/TextField";
 import { Checkbox, Text } from "react-native-paper";
@@ -9,6 +9,7 @@ const EventRegister = (props) => {
     const [mobileNumber, setMobileNumber] = useState('')
     const [emailID, setEmailID] = useState('')
     const [password, setPassword] = useState('')
+    const [flow, setFlow] = useState('')
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,12 +24,19 @@ const EventRegister = (props) => {
             } else if (!passwordRegex.test(password)) {
                 Alert.alert("Error", "Password must be at least 8 characters long, including letters, numbers, 1 special character, and 1 capital letter");
             } else {
-                props.navigation.navigate("AccountDetailsGST", {mob:mobileNumber, email:emailID, password:password});
+                props.navigation.navigate("AccountDetailsGST", {mob:mobileNumber, email:emailID, password:password, flow:flow});
             }
         } else {
             Alert.alert("Error", "Please fill all fields");
         }
     };
+
+    useEffect(()=>{
+        if(props.route.params.flow){
+            setFlow(props.route.params.flow)
+        }
+    },[props.route])
+    
 
     return (
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flex: 1, alignItems: 'center', padding: 15 }}>
@@ -44,7 +52,8 @@ const EventRegister = (props) => {
             </View>
 
             <View style={{ padding: 10 }}>
-                <TextField placeholder="Mobile Number" value={mobileNumber} onChangeText={(px) => { setMobileNumber(px) }} inputMode="numeric" password={false}/>
+                <TextField placeholder="Mobile Number" value={mobileNumber} onChangeText={(px) => { setMobileNumber(px) }} inputMode="numeric" password={false}
+                    maxLength={10}/>
                 <TextField placeholder="Email ID" value={emailID} onChangeText={(px) => { setEmailID(px) }} password={false}/>
                 <TextField placeholder="Password" value={password} onChangeText={(px) => { setPassword(px) }} password={true}/>
                 <View style={{ marginBottom: 30, marginTop: 20 }}>

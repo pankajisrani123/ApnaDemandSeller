@@ -26,10 +26,12 @@ const LandingPage = (props) => {
 
     useEffect(() => {
         GetToken().then(() => {
-            if (token) {
-                setAuthenticated(true)
-                console.log(authenticated);
+            if (token!=null) {
+                // setAuthenticated(true)
+                // console.log(authenticated);
+                console.log(token);
             }
+            
         }, err => {
             console.log(
                 "Error"
@@ -69,16 +71,24 @@ const LandingPage = (props) => {
                     buttonColor='#FFCB40' labelStyle={{ paddingHorizontal: 50, paddingVertical: 10 }}
                 >E-Commerce Store</Button>
                 <Button onPress={() => {
-                    setLoading(true)
-                    setTimeout(() => {
-                        if (authenticated) {
-                            props.navigation.navigate("Dashboard")
-                            setLoading(false)
-                        } else {
+                    // 
+                    // 
+                    if(token!=null){
+                        setLoading(true)
+                        setTimeout(() => {
+                                    props.navigation.replace("Dashboard")
+                                    setLoading(false)
+                                
+                            }, 2000);
+                    }
+                    else {
+                        setLoading(true)
+                        setTimeout(() => {
                             props.navigation.navigate("EventLogin")
-                            setLoading(false)
-                        }
-                    }, 2000);
+                        setLoading(false)
+                        }, 2000);
+                        
+                    }
                 }} textColor='#FFCB40' mode='outlined'
                     style={{ marginTop: 15, borderColor: '#FFCB40' }}
                     labelStyle={{ paddingHorizontal: 55, paddingVertical: 10 }}>Events Place</Button>

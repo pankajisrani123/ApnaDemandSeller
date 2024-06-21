@@ -47,6 +47,7 @@ const PartnerDetails = (props) => {
     const [upiId, setUpiId] = useState('')
 
     const [isTax, setIsTax] = useState(false)
+    const [flow, setFlow] = useState('')
 
     useEffect(() => {
 
@@ -64,7 +65,7 @@ const PartnerDetails = (props) => {
         setBusinessName(props.route.params.businessName)
         setBusinessLatitude(props.route.params.businessLatitude)
         setBusinessLongitude(props.route.params.businessLongitude)
-
+        setFlow(props.route.params.flow)
 
         if (props.route.params.taxGST) {
             setIsTax(true)
@@ -166,6 +167,8 @@ const PartnerDetails = (props) => {
         setBusinessName(props.route.params.businessName)
         setBusinessLatitude(props.route.params.businessLatitude)
         setBusinessLongitude(props.route.params.businessLongitude)
+        setFlow(props.route.params.flow)
+
 
         if (props.route.params.taxGST) {
             setIsTax(true)
@@ -224,17 +227,21 @@ const PartnerDetails = (props) => {
 
 
 
-        try {
-            const res = await axios.post('https://apnademand.com/api/venue/signup', formData)
-            if(res.data.status == true){
-                ToastAndroid.show("Registration complete, please login!", ToastAndroid.SHORT)
-                props.navigation.navigate("EventLogin")
-            }else{
-                ToastAndroid.show("Error while registring user, Try again!", ToastAndroid.SHORT)
+        if(flow=='event'){
+            try {
+                const res = await axios.post('https://apnademand.com/api/venue/signup', formData)
+                if(res.data.status == true){
+                    ToastAndroid.show("Registration complete, please login!", ToastAndroid.SHORT)
+                    props.navigation.navigate("EventLogin")
+                }else{
+                    ToastAndroid.show("Error while registring user, Try again!", ToastAndroid.SHORT)
+                }
             }
-        }
-        catch (e) {
-            console.log(e);
+            catch (e) {
+                console.log(e);
+            }
+        }else{
+            ToastAndroid.show("Ecommerce needs to be implemented", ToastAndroid.SHORT)
         }
     }
 

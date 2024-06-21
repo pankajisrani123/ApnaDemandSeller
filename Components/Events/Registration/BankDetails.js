@@ -31,6 +31,7 @@ const BankDetails = (props) => {
     const [bank, setBank] = useState("")
 
     const [upiId, setUpiId] = useState('')
+    const [flow, setFlow] = useState('')
 
     const NavigateToPickupAddress = () => {
         // props.navigation.navigate("PickupAddress")
@@ -40,7 +41,7 @@ const BankDetails = (props) => {
                     if (accountNumber.length >= 8 && accountNumber.length <= 17) {
                         props.navigation.navigate("PickupAddress", {
                             email: email, mob: mob, password: password, taxGST: taxGST, gstin: gstin, enrollmentNo: enrollmentNo, taxPAN: taxPAN, pan: pan, aadhar: aadhar,
-                            holderName: holderName, accountNumber: accountNumber, ifscCode: ifscCode, branch: branch, bank: bank, bankMethod: 'account'
+                            holderName: holderName, accountNumber: accountNumber, ifscCode: ifscCode, branch: branch, bank: bank, bankMethod: 'account', flow:flow
                         })
                     }
                 } else {
@@ -52,7 +53,9 @@ const BankDetails = (props) => {
         } else {
             if (upiId) {
                 if (upiId.includes("@")) {
-                    props.navigation.navigate("PickupAddress", { email: email, mob: mob, password: password, taxGST: taxGST, gstin: gstin, enrollmentNo: enrollmentNo, taxPAN: taxPAN, pan: pan, aadhar: aadhar, upiId: upiId, bankMethod: 'upi' })
+                    props.navigation.navigate("PickupAddress", { email: email, mob: mob, password: password, taxGST: taxGST, gstin: gstin, enrollmentNo: enrollmentNo, taxPAN: taxPAN, pan: pan, aadhar: aadhar, upiId: upiId, bankMethod: 'upi',
+                        flow:flow
+                     })
                 } else {
                     Alert.alert("Error", "Incorrect UPI ID Format, Try again!")
                 }
@@ -69,6 +72,7 @@ const BankDetails = (props) => {
         setPassword(props.route.params.password)
         setTaxGST(props.route.params.taxGST)
         setTaxPAN(props.route.params.taxPAN)
+        setFlow(props.route.params.flow)
 
         if (props.route.params.taxGST) {
             if (props.route.params.taxGST == "gstin") {
