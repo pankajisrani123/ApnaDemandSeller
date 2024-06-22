@@ -73,7 +73,7 @@ const PickupAddress = (props) => {
             .then(location => {
                 setBusinessLatitude(location.latitude.toString())
                 setBusinessLongitude(location.longitude.toString())
-
+                console.log(location);
                 Geocoder.from({
                     latitude: businessLatitude,
                     longitude: businessLongitude

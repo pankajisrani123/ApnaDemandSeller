@@ -33,6 +33,7 @@ const BankDetails = (props) => {
     const [upiId, setUpiId] = useState('')
     const [flow, setFlow] = useState('')
 
+    
     const NavigateToPickupAddress = () => {
         // props.navigation.navigate("PickupAddress")
         if (radioSelection == '1') {
@@ -73,7 +74,7 @@ const BankDetails = (props) => {
         setTaxGST(props.route.params.taxGST)
         setTaxPAN(props.route.params.taxPAN)
         setFlow(props.route.params.flow)
-
+        flow == 'event'? setRadioSelection('1') : setRadioSelection('2')
         if (props.route.params.taxGST) {
             if (props.route.params.taxGST == "gstin") {
                 setGstin(props.route.params.gstin)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Dimensions, Image, ImageBackground, ScrollView, TextInput, View, TouchableOpacity, ToastAndroid } from "react-native";
 import TextField from "../../UIElements/TextField";
-import { Checkbox, IconButton, RadioButton, Text } from "react-native-paper";
+import { ActivityIndicator, Checkbox, IconButton, Modal, Portal, RadioButton, Text } from "react-native-paper";
 import CustomButton from "../../UIElements/CustomButton";
 
 import BackIos from '../../../Assets/Icons/Back.svg'
@@ -48,6 +48,8 @@ const PartnerDetails = (props) => {
 
     const [isTax, setIsTax] = useState(false)
     const [flow, setFlow] = useState('')
+
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
 
@@ -158,6 +160,7 @@ const PartnerDetails = (props) => {
 
     const HandleSignup = async () => {
 
+        setLoading(true)
         setEmail(props.route.params.email)
         setMob(props.route.params.mob)
         setPassword(props.route.params.password)
@@ -224,24 +227,69 @@ const PartnerDetails = (props) => {
             "is_tax": isTax
         }
 
+        /**Form Data Ecommerce =
+         * https://apnademand.com/api/vendor/appSellerRegister
+         * 
+         * phone:8958224018
+           email:raman@gmail.com
+           password:Raman@123
+           gstin_no:123456789
+           uin_no:123456789
+           pan_no:RAMAN1100D
+           upi_id:raman@okasis
+           aadhar_no:6910109669101079
+           buissness_loc:Dehradun
+           buisness_name:Raman's Shop
+           name:Raman Daksh
 
+           {"email": "demomail@mail.com", "flow": "ecommerce", "mob": "1234567890", "password": "Abcd@1234"}
+           */
 
+           const formDataEcommerce = {
+            "phone": props.route.params.mob,
+            "email": props.route.params.email,
+            "password": props.route.params.password,
+            "gstin_no": taxGST == 'gstin' ? gstin : null,
+            "uin_no": taxGST == 'enrollment' ? enrollmentNo : null,
+            "pan_no": taxGST && taxPAN == 'pan' ? pan : null,
+            "aadhar_no": taxGST && taxPAN == 'aadhar' ? aadhar : null,
+            "upi_id": bankMethod == 'upi' ? upiId : null,
+            "buissness_loc": personalAddress,
+            "buisness_name": businessName,
+            "name": personalName,
+           }
 
-        if(flow=='event'){
+           console.log(formDataEcommerce);
+
+        if (flow == 'event') {
             try {
-                const res = await axios.post('https://apnademand.com/api/venue/signup', formData)
-                if(res.data.status == true){
+                const res = await axios.post('https://apnademand.com/api/venue/signup', formData).catch(e=>{
+                    ToastAndroid.show(e, ToastAndroid.SHORT)
+                })
+                if (res.data.status == true) {
+                    setLoading(false)
                     ToastAndroid.show("Registration complete, please login!", ToastAndroid.SHORT)
                     props.navigation.navigate("EventLogin")
-                }else{
+                } else {
                     ToastAndroid.show("Error while registring user, Try again!", ToastAndroid.SHORT)
+                    setLoading(false)
                 }
             }
             catch (e) {
                 console.log(e);
             }
-        }else{
-            ToastAndroid.show("Ecommerce needs to be implemented", ToastAndroid.SHORT)
+        } else {
+            const res = await axios.post('https://apnademand.com/api/vendor/appSellerRegister', formDataEcommerce).catch(e=>{
+                ToastAndroid.show(e, ToastAndroid.SHORT)
+            })
+            if (res.data.status == true) {
+                setLoading(false)
+                ToastAndroid.show("Registration complete, please login!", ToastAndroid.SHORT)
+                props.navigation.navigate("SellerLogin")
+            } else {
+                setLoading(false)
+                ToastAndroid.show("Error while registring user, Try again!", ToastAndroid.SHORT)
+            }
         }
     }
 
@@ -316,6 +364,15 @@ const PartnerDetails = (props) => {
                     </View>
                 </View>
             </View>
+            
+            {loading ?
+                <Portal>
+                    <Modal visible={loading} style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }} dismissable={false}>
+                        <ActivityIndicator size={50} color='#FFCB40' />
+                    </Modal>
+                </Portal>
+                :
+                null}
         </ScrollView>
     )
 }

@@ -20,6 +20,7 @@ import SelectVenue from './Components/Events/Dashboard/SelectVenue';
 import VenueCategories from './Components/Events/Dashboard/VenueCategories';
 import Profile from './Components/Events/Dashboard/Profile';
 import AddDetails from './Components/Events/AddDetails/AddDetails';
+import DashboardEcommerce from './Components/Ecommerce/Dashboard/Dashboard';
 
 
 
@@ -112,6 +113,7 @@ const App = () => {
                     <Stack.Screen name='VenueCategories' component={VenueCategories} />
                     <Stack.Screen name='Profile' component={Profile} />
                     <Stack.Screen name='AddDetails' component={AddDetails} />
+                    <Stack.Screen name='DashboardEcommerce' component={DashboardEcommerce} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
