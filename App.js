@@ -36,13 +36,20 @@ const App = () => {
         try {
             const email = await AsyncStorage.getItem('email');
             const password = await AsyncStorage.getItem('password');
-            const loginData = {
+            const emailEcom = await AsyncStorage.getItem('emailEcom')
+            const passEcom = await AsyncStorage.getItem('passEcom')
+            const loginDataEvent = {
                 "email": email,
                 "password": password
             }
+            const loginDataEcom = {
+                "email": emailEcom,
+                "password": passEcom
+            }
+
             try {
                 if (email && password) {
-                    const value = await axios.post('https://apnademand.com/api/venue/login', loginData).then((rs) => {
+                    const value = await axios.post('https://apnademand.com/api/venue/login', loginDataEvent).then((rs) => {
                         if (rs.data.token !== null) {
                             setToken(rs.data.token)
                             StoreToken(rs.data.token)
@@ -84,6 +91,7 @@ const App = () => {
          * react native Geocoder
          * https://www.npmjs.com/package/react-native-geocoding
          * 
+         * Event Login:
          * Emailezample@mail.com
            Adi@12345
 
