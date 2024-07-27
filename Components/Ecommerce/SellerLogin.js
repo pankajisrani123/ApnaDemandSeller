@@ -1,7 +1,7 @@
 import * as react from 'react'
 import { ScrollView, View, Image, Dimensions, TextInput, ToastAndroid } from 'react-native'
 import { ActivityIndicator, Button, Checkbox, Icon, IconButton, Modal, Portal, Text } from 'react-native-paper'
-import * as SQLite from 'react-native-sqlite-storage'
+// import * as SQLite from 'react-native-sqlite-storage'
 
 import BackIos from '../../Assets/Icons/Back.svg'
 import PersonUnfocused from '../../Assets/Icons/personunfocused.svg'
@@ -43,24 +43,25 @@ const SellerLogin = (props) => {
     };
 
     const HandleLogin = async () => {
-        setLoading(true)
-        if (idValue.length > 0 && passValue.length > 0) {
-            const loginData = {
-                'email': idValue,
-                'password': passValue
-            }
-            await axios.post('https://apnademand.com/api/vendor/appSellerLogin', loginData).then((rs) => {
-                setLoading(false)
-                storeData(rs.data.api_token)
-                console.log(rs.data.api_token);
-            }).catch((e)=>{
-                ToastAndroid.show(e, ToastAndroid.SHORT)
-            })
-            //**{"email": "Demomail@example.com", "flow": "ecommerce", "mob": "5686535686", "password": "Abc@1234"} */
-        }
-        else {
-            alert('Please fill all fields')
-        }
+        // setLoading(true)
+        // if (idValue.length > 0 && passValue.length > 0) {
+        //     const loginData = {
+        //         'email': idValue,
+        //         'password': passValue
+        //     }
+        //     await axios.post('https://apnademand.com/api/vendor/appSellerLogin', loginData).then((rs) => {
+        //         setLoading(false)
+        //         storeData(rs.data.api_token)
+        //         console.log(rs.data.api_token);
+        //     }).catch((e)=>{
+        //         ToastAndroid.show(e, ToastAndroid.SHORT)
+        //     })
+        //     //**{"email": "Demomail@example.com", "flow": "ecommerce", "mob": "5686535686", "password": "Abc@1234"} */
+        // }
+        // else {
+        //     alert('Please fill all fields')
+        // }
+        props.navigation.replace("DashboardEcommerce")
     }
 
     return (

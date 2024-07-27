@@ -29,22 +29,27 @@ const LandingPage = (props) => {
         setLoading(true)
         const email = await AsyncStorage.getItem('emailEcom')
         const pass = await AsyncStorage.getItem('passwordEcom')
-        const loginData = {
-            'email': email,
-            'password': pass
-        }
-        await axios.post('https://apnademand.com/api/vendor/appSellerLogin', loginData).then(async(rs) => {
-            if (rs.data.message === "Login successful") {
-                await AsyncStorage.setItem('tokenEcom', rs.data.api_token)
-                setLoading(false)
-                props.navigation.replace('DashboardEcommerce')
-            }else{
-                setLoading(false)
+        if(email && pass){
+            const loginData = {
+                'email': email,
+                'password': pass
             }
-        }).catch(e => {
+            await axios.post('https://apnademand.com/api/vendor/appSellerLogin', loginData).then(async(rs) => {
+                if (rs.data.message === "Login successful") {
+                    await AsyncStorage.setItem('tokenEcom', rs.data.api_token)
+                    setLoading(false)
+                    props.navigation.replace('DashboardEcommerce')
+                }else{
+                    setLoading(false)
+                }
+            }).catch(e => {
+                setLoading(false)
+                console.log(e);
+            })
+        }else{
             setLoading(false)
-            console.log(e);
-        })
+            props.navigation.navigate('SellerLogin')
+        }
     }
 
     useEffect(() => {

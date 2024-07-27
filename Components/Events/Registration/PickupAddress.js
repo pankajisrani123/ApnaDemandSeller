@@ -47,7 +47,7 @@ const PickupAddress = (props) => {
             props.navigation.navigate('PartnerDetails', {
                 email: email, mob: mob, password: password, taxGST: taxGST, gstin: gstin, enrollmentNo: enrollmentNo, taxPAN: taxPAN, pan: pan, aadhar: aadhar,
                 holderName: holderName, accountNumber: accountNumber, ifscCode: ifscCode, branch: branch, bank: bank, bankMethod: bankMethod, upiId: upiId, businessName: businessName,
-                businessLatitude: businessLatitude, businessLongitude: businessLongitude, flow:flow
+                businessLatitude: businessLatitude, businessLongitude: businessLongitude, flow: flow
             })
         } else {
             Alert.alert("Error", "Please fill all the required details")
@@ -55,12 +55,26 @@ const PickupAddress = (props) => {
 
     }
 
+    // var NodeGeocoder = require('node-geocoder');
+
+    // var options = {
+    //     provider: 'google',
+    //     httpAdapter: 'https', // Default
+    //     apiKey: 'AIzaSyB_Tnu5hw7u8B4BfcRFIc-0FItvkZjow_Y', // for Mapquest, OpenCage, Google Premier
+    //     formatter: 'json' // 'gpx', 'string', ...
+    // };
+
+    // var geocoder = NodeGeocoder(options);
+
+
+
     const GetAddress = () => {
         Geocoder.from(businessAddress)
             .then(json => {
                 setBusinessAddress(json.results[0].formatted_address)
                 setBusinessLatitude(json.results[0].geometry.location.lat)
                 setBusinessLongitude(json.results[0].geometry.location.lng)
+                console.log(json.results[0]);
             })
             .catch(error => ToastAndroid.show("Error Fetching location", ToastAndroid.SHORT));
     }
@@ -74,11 +88,13 @@ const PickupAddress = (props) => {
                 setBusinessLatitude(location.latitude.toString())
                 setBusinessLongitude(location.longitude.toString())
                 console.log(location);
+                
                 Geocoder.from({
                     latitude: businessLatitude,
                     longitude: businessLongitude
                 }).then((rs) => {
                     setBusinessAddress(rs.results[1].formatted_address)
+                    console.log(rs.results[1])
                 }).catch((err) => {
                     console.log(err);
                 });
@@ -124,8 +140,6 @@ const PickupAddress = (props) => {
         } else {
             setUpiId(props.route.params.upiId)
         }
-        console.log(props.route.params);
-        console.log(accountNumber);
     })
 
     return (

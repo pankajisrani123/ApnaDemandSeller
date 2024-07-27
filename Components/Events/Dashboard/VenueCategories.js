@@ -36,7 +36,9 @@ const VenueCategories = (props) => {
     const [data, setData] = useState()
 
     const GetToken = async () => {
+        
         await AsyncStorage.getItem("token").then((rs) => {
+            console.log(rs);
             setTokenData(rs)
             GetVenueCategories(rs)
         })
@@ -45,13 +47,17 @@ const VenueCategories = (props) => {
     }
 
     const GetVenueCategories = async (token) => {
-        await axios.get(`https://apnademand.com/api/venue/get-venueCategories/${venueId}`, {
+        
+        await axios.get(`https://event.apnademand.com/public/api/categories`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         }).then((rs) => {
-            setData(rs.data.venue_categories)
-            console.log(token);
+            // setData(rs.data.categories)
+            // console.log(token);
+            console.log(rs.data);
+        }).catch((rs)=>{
+            console.log(rs);
         })
     }
 

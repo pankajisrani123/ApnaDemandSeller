@@ -201,30 +201,30 @@ const PartnerDetails = (props) => {
         }
         console.log(accountNumber);
         const formData = {
-            "mobile_no": props.route.params.mob,
+            "name": personalName,
+            "phone": props.route.params.mob,
             "email": props.route.params.email,
             "password": props.route.params.password,
-            "gstin_no": taxGST == 'gstin' ? gstin : null,
-            "uin_no": taxGST == 'enrollment' ? enrollmentNo : null,
-            "pan_no": taxGST && taxPAN == 'pan' ? pan : null,
-            "aadhar_no": taxGST && taxPAN == 'aadhar' ? aadhar : null,
-            "acc_holder_name": bankMethod == 'account' ? holderName : null,
-            "acc_no": bankMethod == 'account' ? accountNumber : null,
-            "ifsc_code": bankMethod == 'account' ? ifscCode : null,
+            "gstin": taxGST == 'gstin' ? gstin : null,
+            "uin": taxGST == 'enrollment' ? enrollmentNo : null,
+            "pan": taxGST && taxPAN == 'pan' ? pan : null,
+            "aadhar": taxGST && taxPAN == 'aadhar' ? aadhar : null,
+            "account_holder_name": bankMethod == 'account' ? holderName : null,
+            "account_number": bankMethod == 'account' ? accountNumber : null,
+            "ifsc": bankMethod == 'account' ? ifscCode : null,
             "branch": bankMethod == 'account' ? branch : null,
             "bank": bankMethod == 'account' ? bank : null,
-            "upi_id": bankMethod == 'upi' ? upiId : null,
-            "buisness_name": businessName,
-            "buissness_loc": {
-                "latitude": parseFloat(businessLatitude),
-                "longitude": parseFloat(businessLongitude)
-            },
-            "personal_loc": {
-                "latitude": parseFloat(personalLatitude),
-                "longitude": parseFloat(personalLongitude)
-            },
-            "name": personalName,
-            "is_tax": isTax
+            "upi": bankMethod == 'upi' ? upiId : null,
+            // "buisness_name": businessName,
+            // "buissness_loc": {
+            //     "latitude": parseFloat(businessLatitude),
+            //     "longitude": parseFloat(businessLongitude)
+            // },
+            // "personal_loc": {
+            //     "latitude": parseFloat(personalLatitude),
+            //     "longitude": parseFloat(personalLongitude)
+            // },
+            "location":null
         }
 
         /**Form Data Ecommerce =
@@ -263,9 +263,10 @@ const PartnerDetails = (props) => {
 
         if (flow == 'event') {
             try {
-                const res = await axios.post('https://apnademand.com/api/venue/signup', formData).catch(e=>{
+                const res = await axios.post('https://event.apnademand.com/public/api/organizersignup', formData).catch(e=>{
                     ToastAndroid.show(e, ToastAndroid.SHORT)
                 })
+                console.log(res.data)
                 if (res.data.status == true) {
                     setLoading(false)
                     ToastAndroid.show("Registration complete, please login!", ToastAndroid.SHORT)
@@ -277,6 +278,7 @@ const PartnerDetails = (props) => {
             }
             catch (e) {
                 console.log(e);
+                setLoading(false)
             }
         } else {
             const res = await axios.post('https://apnademand.com/api/vendor/appSellerRegister', formDataEcommerce).catch(e=>{

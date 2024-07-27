@@ -18,14 +18,14 @@ const SelectVenue = (props) => {
     const GetVenues = async () => {
         const token = await AsyncStorage.getItem('token')
         if (token != null) {
-            await axios.get('https://apnademand.com/api/venue/get-venues', {
+            await axios.get('https://event.apnademand.com/public/api/categories', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             }).then((rs) => {
                 if (rs.data.status == true) {
                     setAuthorized(true)
-                    setData(rs.data.venue_data)
+                    setData(rs.data.categories)
 
                 } else {
                     setAuthorized(false)

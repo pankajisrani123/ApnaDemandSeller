@@ -21,7 +21,7 @@ const EventLogin = (props) => {
 
     const [idTextState, setIdTextState] = react.useState(false)
     const [passTextState, setPassTextState] = react.useState(false)
-    const [passEnabled, setPassEnabled] = react.useState(false)
+    const [passEnabled, setPassEnabled] = react.useState(true)
 
     const [idValue, setIdValue] = react.useState('')
     const [passValue, setPassValue] = react.useState('')
@@ -56,11 +56,11 @@ const EventLogin = (props) => {
             if (connection) {
                 if (idValue && passValue) {
                     setLoading(true)
-                    const res = await axios.post('https://apnademand.com/api/venue/login', loginData).then((rs) => {
-                        storeData(rs.data.token)
+                    const res = await axios.post('https://event.apnademand.com/public/api/organizerlogin', loginData).then((rs) => {
+                        storeData(rs.data.api_token)
                     }, err => {
                         // ToastAndroid.show("Login Failure, check your credentials!", ToastAndroid.SHORT)
-                        console.log(res);
+                        console.log(err);
                         setLoading(false)
                     })
                 } else {

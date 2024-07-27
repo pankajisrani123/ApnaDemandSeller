@@ -92,8 +92,9 @@ const App = () => {
          * https://www.npmjs.com/package/react-native-geocoding
          * 
          * Event Login:
-         * Emailezample@mail.com
-           Adi@12345
+         * Pearl@mail.com
+         * Pearl@1234
+
 
            Make it dynamic
          */
