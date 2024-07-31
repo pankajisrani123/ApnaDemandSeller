@@ -25,46 +25,68 @@ const LandingPage = (props) => {
         setToken(token)
     }
 
+    const NavigateToEvents = async () => {
+        const email = await AsyncStorage.getItem('email')
+        const password = await AsyncStorage.getItem('password')
+        if (email && password) {
+            setLoading(true)
+            const loginData = {
+                "email": email,
+                "password": password
+            }
+
+            await axios.post('https://event.apnademand.com/public/api/organizerlogin', loginData).then(async (rs) => {
+
+                await AsyncStorage.setItem('token', rs.data.api_token).then(() => {
+                    setTimeout(() => {
+                        props.navigation.replace("Dashboard")
+                    }, 1000);
+
+                });
+
+            }, error => {
+                setLoading(false)
+                console.log(error);
+            })
+        } else {
+            setLoading(true)
+            setTimeout(() => {
+                props.navigation.navigate("EventLogin")
+                setLoading(false)
+
+            }, 2000);
+        }
+    }
+
     const NavigateToSellerLogin = async () => {
         setLoading(true)
         const email = await AsyncStorage.getItem('emailEcom')
         const pass = await AsyncStorage.getItem('passwordEcom')
-        if(email && pass){
+        if (email && pass) {
             const loginData = {
                 'email': email,
                 'password': pass
             }
-            await axios.post('https://apnademand.com/api/vendor/appSellerLogin', loginData).then(async(rs) => {
+            await axios.post('https://apnademand.com/api/vendor/appSellerLogin', loginData).then(async (rs) => {
                 if (rs.data.message === "Login successful") {
                     await AsyncStorage.setItem('tokenEcom', rs.data.api_token)
                     setLoading(false)
                     props.navigation.replace('DashboardEcommerce')
-                }else{
+                } else {
                     setLoading(false)
                 }
             }).catch(e => {
                 setLoading(false)
                 console.log(e);
             })
-        }else{
+        } else {
             setLoading(false)
             props.navigation.navigate('SellerLogin')
         }
     }
 
     useEffect(() => {
-        GetToken().then(() => {
-            if (token != null) {
-                // setAuthenticated(true)
-                // console.log(authenticated);
-                console.log(token);
-            }
-
-        }, err => {
-            console.log(
-                "Error"
-            );
-        })
+        GetToken()
     })
     return (
         <ScrollView style={{ flex: 1, paddingVertical: 20, flexDirection: 'column', backgroundColor: 'white', }}
@@ -101,22 +123,7 @@ const LandingPage = (props) => {
                 <Button onPress={() => {
                     // 
                     // 
-                    if (token != null) {
-                        setLoading(true)
-                        setTimeout(() => {
-                            props.navigation.replace("Dashboard")
-                            setLoading(false)
-
-                        }, 2000);
-                    }
-                    else {
-                        setLoading(true)
-                        setTimeout(() => {
-                            props.navigation.navigate("EventLogin")
-                            setLoading(false)
-                        }, 2000);
-
-                    }
+                    NavigateToEvents()
                 }} textColor='#FFCB40' mode='outlined'
                     style={{ marginTop: 15, borderColor: '#FFCB40' }}
                     labelStyle={{ paddingHorizontal: 55, paddingVertical: 10 }}>Events Place</Button>

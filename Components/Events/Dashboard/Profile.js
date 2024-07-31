@@ -30,34 +30,31 @@ const Profile = (props) => {
 
     const [updateData, setUpdateData] = useState(null)
 
-    // email, username, phone, photo, twitter, facebook, (organizer)
-    // aadhar, bank details: account no.
-    //  account holder name
-    // bank, branch
-    // city, country, address, name, pan, designation, zip code, state, upi (organizerInfo)
 
+    const [phone, setPhone] = useState(organizer?.phone)
+    const [username, setUsername] = useState(organizer?.username)
+    const [email, setEmail] = useState(organizer?.email)
+    const [twitter, setTwitter] = useState(organizer?.twitter)
+    const [facebook, setFacebook] = useState(organizer?.facebook)
+    const [linkedin, setLinkedin] = useState(organizer?.linkedin)
+    const [designation, setDesignation] = useState(organizerInfo?.designation)
+    const [details, setDetails] = useState(organizerInfo?.details)
+    const [aadhar, setAadhar] = useState(organizerInfo?.aadhar)
+    const [pan, setPan] = useState(organizerInfo?.pan)
+    const [GSTIN, setGSTIN] = useState(organizerInfo?.gstin)
+    const [bank, setBank] = useState(organizerInfo?.bank)
+    const [branch, setBranch] = useState(organizerInfo?.branch)
+    const [accountHolderName, setAccountHolderName] = useState(organizerInfo?.account_holder_name)
+    const [accountNumber, setAccountNumber] = useState(organizerInfo?.account_number)
+    const [ifsc, setIfsc] = useState(organizerInfo?.ifsc)
+    const [uin, setUin] = useState(organizerInfo?.uin)
+    const [upi, setUpi] = useState(organizerInfo?.upi)
+    const [address, setAddress] = useState(organizerInfo?.address)
+    const [city, setCity] = useState(organizerInfo?.city)
+    const [state, setState] = useState(organizerInfo?.state)
+    const [pincode, setPincode] = useState(organizerInfo?.zip_code)
+    const [Country, setCountry] = useState(organizerInfo?.country)
 
-    // name:Raman Daksh
-    // gstin:Raman123
-    // uin:raman1234
-    // pan:RAMAN12345
-    // aadhar:691071793153
-    // account_holder_name:Raman Daksh
-    // account_number:12345678912
-    // ifsc:LOLBANK
-    // branch:DDN
-    // bank:DDN BANK
-    // upi:raman@okaxis
-    // country:india
-    // city:Dehradun
-    // state:Uttarakhand
-    // zip_code:248001
-    // address:ISBT
-    // details:Pearl Organisation
-    // designation:Owner
-    // facebook:fb
-    // twitter:tw
-    // linkedin:ln
 
     const GetToken = async () => {
         await AsyncStorage.getItem("token").then((res) => {
@@ -81,6 +78,29 @@ const Profile = (props) => {
             if (res.data.status) {
                 setOrganizer(res.data.organizer)
                 setOrganizerInfo(res.data.organizer_info)
+                setPhone(organizer.phone)
+                setEmail(organizer.email)
+                setUsername(organizer.username)
+                setTwitter(organizer.twitter)
+                setFacebook(organizer.facebook)
+                setLinkedin(organizer.linkedin)
+                setDesignation(organizerInfo.designation)
+                setDetails(organizerInfo.details)
+                setAadhar(organizerInfo.aadhar)
+                setPan(organizerInfo.pan)
+                setGSTIN(organizerInfo.gstin)
+                setBank(organizerInfo.bank)
+                setBranch(organizerInfo.branch)
+                setAccountHolderName(organizerInfo.account_holder_name)
+                setAccountNumber(organizerInfo.account_number)
+                setIfsc(organizerInfo.ifsc)
+                setUin(organizerInfo.uin)
+                setUpi(organizerInfo.upi)
+                setAddress(organizerInfo.address)
+                setCity(organizerInfo.city)
+                setState(organizerInfo.state)
+                setPincode(organizerInfo.zip_code)
+                setCountry(organizerInfo.country)
             } else {
                 ToastAndroid.SHORT("Authorization error", ToastAndroid.SHORT)
             }
@@ -105,7 +125,7 @@ const Profile = (props) => {
     }, [!organizer])
 
     return (
-        <ScrollView style={{ flex: 1, width: '100%', }} contentContainerStyle={{ alignItems: 'center', flex: 1 }}>
+        <View style={{ flex: 1, width: '100%', alignItems: 'center' }}>
             <View style={{ position: 'absolute', flex: 1, alignItems: 'center', width: '100%' }}>
                 <Image source={require("../../../Assets/Images/AppBg.png")} />
             </View>
@@ -125,70 +145,106 @@ const Profile = (props) => {
                         setEditMode(true)
                     }
                 }} textColor="white" style={{ marginEnd: 5 }}>
-                    {editMode ? "Edit" : "Save"}
+                    {editMode ? "Save" : "Edit Mode"}
                 </Button>
             </View>
 
-            {organizer && organizerInfo ?
+            <ScrollView style={{ width: '100%', flex: 1 }} contentContainerStyle={{ alignItems: 'center' }}>
+                {organizer && organizerInfo ?
 
-                <>
-                    <View style={{ flex: 1, width: '100%', alignItems: 'center', }}>
-                        <View style={{
-                            flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly',
-                            width: '100%'
-                        }}>
-                            <TouchableOpacity onPress={() => { }} style={{}}>
-                                <Card style={{ width: Dimensions.get('screen').width / 3, height: Dimensions.get('screen').width / 3, borderRadius: Dimensions.get('screen').width / 6 }}>
-                                    <Image source={{ uri: "https://i.ibb.co/6mcc8LF/Group-18327.png" }}
-                                        style={{ width: '100%', height: '100%' }} />
-                                </Card>
-                            </TouchableOpacity>
+                    <>
+                        <View style={{ flex: 1, width: '100%', alignItems: 'center', marginBottom: 150 }}>
+                            <View style={{
+                                flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly',
+                                width: '100%'
+                            }}>
+                                <TouchableOpacity onPress={() => { }} style={{}}>
+                                    <Card style={{ width: Dimensions.get('screen').width / 3, height: Dimensions.get('screen').width / 3, borderRadius: Dimensions.get('screen').width / 6 }}>
+                                        <Image source={{ uri: "https://i.ibb.co/6mcc8LF/Group-18327.png" }}
+                                            style={{ width: '100%', height: '100%' }} />
+                                    </Card>
+                                </TouchableOpacity>
 
-                            <View>
-                                <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{organizerInfo.name}</Text>
-                                <Text style={{ color: '#797979' }}>{organizer.username}</Text>
-                                <Text style={{ color: '#414141' }}>{organizer.email}</Text>
+                                <View>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{organizerInfo.name}</Text>
+                                    <Text style={{ color: '#797979' }}>{organizer.username}</Text>
+                                    <Text style={{ color: '#414141' }}>{organizer.email}</Text>
+                                </View>
+                            </View>
+                            <View style={{ width: '100%', padding: 20 }}>
+                                <Text style={{ fontWeight: 'bold' }}>User Info</Text>
+                                <Divider style={{ backgroundColor: '#A0A0A0', marginTop: 10 }} />
+
+
+                                <View style={{ marginTop: 5 }}>
+                                    <View>
+                                        <TextInput mode="flat" value={phone} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Phone" />
+                                        <TextInput mode="flat" value={username} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Username" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={email} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Email" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={twitter} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Twitter" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={linkedin} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="LinkedIn" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={facebook} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Facebook" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={designation} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Designation" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={details} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Details" style={{ marginTop: 5 }} />
+                                    </View>
+                                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Document Details:</Text>
+                                    <Divider style={{ backgroundColor: '#A0A0A0', marginTop: 10 }} />
+
+                                    <View style={{ marginTop: 5 }}>
+                                        <TextInput mode="flat" value={aadhar} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Aadhar Number" />
+                                        <TextInput mode="flat" value={pan} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="PAN Number" />
+                                        <TextInput mode="flat" value={GSTIN} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="GSTIN" />
+                                        <TextInput mode="flat" value={bank} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Bank Name" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={organizerInfo.branch} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Branch" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={accountHolderName} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Account Holder Name" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={accountNumber} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Account Number" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={ifsc} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="IFSC" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={uin} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="UIN" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={upi} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="UPI ID" style={{ marginTop: 5 }} />
+                                    </View>
+
+                                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Address Details:</Text>
+                                    <Divider style={{ backgroundColor: '#A0A0A0', marginTop: 10 }} />
+                                    <View style={{ marginTop: 5 }}>
+                                        <TextInput mode="flat" value={address} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Address" />
+                                        <TextInput mode="flat" value={city} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="City" />
+                                        <TextInput mode="flat" value={state} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="State" />
+                                        <TextInput mode="flat" value={pincode} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Pincode" style={{ marginTop: 5 }} />
+                                        <TextInput mode="flat" value={Country} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                            label="Country" style={{ marginTop: 5 }} />
+                                    </View>
+                                </View>
                             </View>
                         </View>
-                        <View style={{ width: '100%', padding: 20 }}>
-                            <Text style={{ fontWeight: 'bold' }}>User Info</Text>
-                            <Divider style={{ backgroundColor: '#A0A0A0', marginTop: 10 }} />
-                            {/* user info:
-                                Mobile
-                                username
-                                email
-                                twitter
-                                facebook
-                                linkedin */}
-                            {/* Document Details:
-                                aadhar
-                                bank name
-                                branch
-                                account holder name
-                                account number
-                                ifsc
-                                upi id */}
-                            {/* Address Info:
-                                    address
-                                    city
-                                    state
-                                    pincode 
-                                    country*/}
-
-                            <View style={{ marginTop: 5 }}>
-                                <TextInput mode="outlined" label="Mobile" disabled={!editMode} value={organizer.phone} style={{ marginTop: 5 }} />
-                                <TextInput mode="outlined" label="Mobile" disabled={!editMode} value={organizer.phone} style={{ marginTop: 5 }}
-                                left/>
-                                
-                            </View>
-                        </View>
-                    </View>
-                </>
-                :
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <ActivityIndicator color="#FFCB40" size={50} />
-                </View>}
-        </ScrollView>
+                    </>
+                    :
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color="#FFCB40" size={50} />
+                    </View>}
+            </ScrollView>
+        </View>
     )
 }
 

@@ -29,58 +29,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
 
 
-    const [token, setToken] = React.useState('')
-
-
-    const GetToken = async () => {
-        try {
-            const email = await AsyncStorage.getItem('email');
-            const password = await AsyncStorage.getItem('password');
-            const emailEcom = await AsyncStorage.getItem('emailEcom')
-            const passEcom = await AsyncStorage.getItem('passEcom')
-            const loginDataEvent = {
-                "email": email,
-                "password": password
-            }
-            const loginDataEcom = {
-                "email": emailEcom,
-                "password": passEcom
-            }
-
-            try {
-                if (email && password) {
-                    const value = await axios.post('https://apnademand.com/api/venue/login', loginDataEvent).then((rs) => {
-                        if (rs.data.token !== null) {
-                            setToken(rs.data.token)
-                            StoreToken(rs.data.token)
-
-                        }
-                    }, err => {
-                        ToastAndroid.show("Login Failure, check your credentials!", ToastAndroid.SHORT)
-                    })
-                }
-            }
-            catch (e) {
-                console.log(e);
-            }
-
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
-    const StoreToken = async (value) => {
-        await AsyncStorage.setItem('token', value)
-    }
-
-
-
-    const GetProfile = async (tokenData) => {
-        const res = await axios.get('https://apnademand.com/api/venue/get-profile', {
-            headers: {
-                Authorization: `Bearer ${tokenData}`,
-            },
-        });
+    
 
         /**
          * Mail password testing
@@ -98,11 +47,10 @@ const App = () => {
 
            Make it dynamic
          */
-    }
+    
 
     React.useEffect(() => {
         Geocoder.init("AIzaSyB_Tnu5hw7u8B4BfcRFIc-0FItvkZjow_Y");
-        GetToken()
     }, [])
     return (
         <PaperProvider>

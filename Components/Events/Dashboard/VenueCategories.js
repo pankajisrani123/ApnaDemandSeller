@@ -17,10 +17,9 @@ import BottomNavigationBar from "../../UIElements/BottomNavigationBar";
 
 const VenueCategories = (props) => {
 
-    const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
     const [venueId, setVenueId] = useState("")
-    const [tokenData, setTokenData] = useState("")
+    
     const [openId, setOpenId] = useState('')
     const [selected, setSelected] = useState([])
 
@@ -35,34 +34,21 @@ const VenueCategories = (props) => {
 
     const [data, setData] = useState()
 
-    const GetToken = async () => {
+    
+
+    const GetVenueCategories = async () => {
         
-        await AsyncStorage.getItem("token").then((rs) => {
-            console.log(rs);
-            setTokenData(rs)
-            GetVenueCategories(rs)
+        const rs = await axios.get(`https://event.apnademand.com/public/api/type`)
+        const response = []
+        rs.data.categories.map((item,index)=>{
+            response.push({id:item.id, type:item.type})
         })
-        setData(props.route.params.data)
-        console.log(data);
+        console.log(response);
+        setData(response)
     }
 
-    const GetVenueCategories = async (token) => {
-        
-        await axios.get(`https://event.apnademand.com/public/api/categories`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }).then((rs) => {
-            // setData(rs.data.categories)
-            // console.log(token);
-            console.log(rs.data);
-        }).catch((rs)=>{
-            console.log(rs);
-        })
-    }
-
-    const NavigateToAddImages = () => {
-        props.navigation.navigate("AddDetails")
+    const NavigateToAddImages = (id) => {
+        props.navigation.navigate("AddDetails", {venueId: venueId, type:id})
     }
 
     const IncludeSelection = (id) => {
@@ -84,10 +70,10 @@ const VenueCategories = (props) => {
     }
 
     useEffect(() => {
+        GetVenueCategories()
         if (props.route.params) {
             setVenueId(props.route.params.id)
             console.log(venueId);
-            GetToken()
         }
     }, [venueId])
 
@@ -103,7 +89,7 @@ const VenueCategories = (props) => {
                             <Back />
                         </View>
                     </TouchableRipple>
-                    <Text style={{ marginStart: 10, fontSize: 20 }}>Venue Categories</Text>
+                    <Text style={{ marginStart: 10, fontSize: 20 }}>Venue Type</Text>
                 </View>
                 <TouchableRipple onPress={() => { }} style={{ width: 40, height: 40, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }} borderless>
                     <Chat />
@@ -122,10 +108,10 @@ const VenueCategories = (props) => {
                                     backgroundColor: 'white', borderRadius: 10, borderWidth: 2,
                                     borderColor: '#FFCB40', width: Dimensions.get('screen').width - 50, marginTop: 20
                                 }} activeOpacity={0.6} onPress={() => {
-                                    SetExpandable(item.item.id)
+                                    NavigateToAddImages(item.item.id)
                                 }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }}>
-                                        <Text style={{ marginStart: 20, fontSize: 18 }}>{item.item.name}</Text>
+                                        <Text style={{ marginStart: 20, fontSize: 18 }}>{item.item.type}</Text>
                                         {item.item.id == openId ?
                                             <Down style={{ marginEnd: 20 }} />
                                             :
@@ -199,11 +185,7 @@ const VenueCategories = (props) => {
                     null}
 
             </View>
-            <View style={{ position: 'absolute', bottom: 50, width: '90%' }}>
-                <Button mode="contained" onPress={() => NavigateToAddImages()} style={{ backgroundColor: '#FFCB40' }}>
-                    Continue
-                </Button>
-            </View>
+            
         </View>
     )
 }

@@ -18,11 +18,7 @@ const SelectVenue = (props) => {
     const GetVenues = async () => {
         const token = await AsyncStorage.getItem('token')
         if (token != null) {
-            await axios.get('https://event.apnademand.com/public/api/categories', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-            }).then((rs) => {
+            await axios.get('https://event.apnademand.com/public/api/categories').then((rs) => {
                 if (rs.data.status == true) {
                     setAuthorized(true)
                     setData(rs.data.categories)
@@ -36,20 +32,9 @@ const SelectVenue = (props) => {
     }
 
     const NavigateToCategories = async (id) => {
-        await AsyncStorage.getItem('token').then(async (rs) => {
 
-            await axios.get(`https://apnademand.com/api/venue/get-venueCategories/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${rs}`
-                }
-            }).then((rs) => {
-                setCategoryData(rs.data.venue_categories)
-                console.log(categoryData);
-                props.navigation.navigate("VenueCategories", { id: id, data: categoryData })
-            }, err => {
-                console.log(err);
-            })
-        })
+        props.navigation.navigate("VenueCategories", { id: id })
+
 
 
     }
@@ -78,7 +63,7 @@ const SelectVenue = (props) => {
                 <Image source={require('../../../Assets/Images/AppBg.png')} />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableRipple onPress={() => { props.navigation.goBack() }} style={{ width: 40, height: 40, borderRadius: 50, alignItems: 'center', justifyContent: 'center', }} borderless>
                         <View style={{ width: 40, height: 40, borderRadius: 40, backgroundColor: 'white', opacity: 0.6, alignItems: 'center', justifyContent: 'center' }}>
                             <Back />
@@ -86,7 +71,7 @@ const SelectVenue = (props) => {
                     </TouchableRipple>
                     <Text style={{ marginStart: 10, fontSize: 20 }}>Select Venue</Text>
                 </View>
-                
+
                 <TouchableRipple onPress={() => { }} style={{ width: 40, height: 40, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }} borderless>
                     <Chat />
                 </TouchableRipple>
