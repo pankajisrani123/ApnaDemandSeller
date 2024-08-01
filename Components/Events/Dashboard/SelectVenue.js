@@ -43,14 +43,7 @@ const SelectVenue = (props) => {
 
     const [authorized, setAuthorized] = useState(false)
 
-    const SetExpandable = (id) => {
-        // NavigateToCategories(id)
-        if (openId == id) {
-            setOpenId("")
-        } else {
-            setOpenId(id)
-        }
-    }
+    
 
 
     useEffect(() => {
@@ -89,35 +82,15 @@ const SelectVenue = (props) => {
                                     backgroundColor: 'white', borderRadius: 10, borderWidth: 2,
                                     borderColor: '#FFCB40', width: Dimensions.get('screen').width - 50, marginTop: 20
                                 }} activeOpacity={0.6} onPress={() => {
-                                    SetExpandable(item.item.id)
+                                    NavigateToCategories(item.item.id)
                                 }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }}>
                                         <Text style={{ marginStart: 20, fontSize: 18 }}>{item.item.name}</Text>
-                                        {item.item.id == openId ?
-                                            <Down style={{ marginEnd: 20 }} />
-                                            :
-                                            <Forward style={{ marginEnd: 20, }} />}
+                                        
+                                            <Forward style={{ marginEnd: 20, }} />
                                         {/* NavigateToCategories(id) */}
                                     </View>
-                                    {item.item.id == openId ?
-                                        <View style={{}}>
-                                            <Text style={{
-                                                paddingTop: 10, paddingBottom: 5, paddingHorizontal: 20,
-                                                fontSize: 16, fontWeight: 'bold'
-                                            }}>Description:</Text>
-                                            <Text style={{ paddingHorizontal: 20, fontSize: 15, paddingBottom: 20 }}>
-                                                {item.item.description}
-                                            </Text>
-                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-                                                <View></View>
-                                                <Button style={{ marginEnd: 20, marginBottom: 10 }} onPress={() => { NavigateToCategories(item.item.id) }} buttonColor="#FFCB40" textColor="white"
-                                                    labelStyle={{ padding: 5 }}>
-                                                    Open
-                                                </Button>
-                                            </View>
-                                        </View>
-                                        :
-                                        null}
+                                    
                                 </TouchableOpacity>
                             )
                         }} />

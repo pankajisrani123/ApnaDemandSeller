@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { Image, ScrollView, View, TouchableOpacity, FlatList, StyleSheet, Dimensions, TextInput, ToastAndroid } from "react-native";
-import { ActivityIndicator, Button, RadioButton, Text, TouchableRipple } from "react-native-paper";
+import { ActivityIndicator, Button, Modal, Portal, RadioButton, Text, TouchableRipple, TextInput as TextInputPaper } from "react-native-paper";
 import Uncheck from '../../../Assets/Icons/circle_uncheck.svg'
 import Check from '../../../Assets/Icons/circle_check.svg'
 import Back from '../../../Assets/Icons/Back.svg'
@@ -12,20 +12,25 @@ import axios from "axios";
 const AddDetails = (props) => {
     const [selectedTab, setSelectedTab] = useState(1);
     const [images, setImages] = useState([]);
+    const [venueId, setVenueId] = useState('')
+    const [venueType, setVenueType] = useState('')
 
     const SelectAndUploadImage = () => {
-        launchImageLibrary({ mediaType: 'photo', quality: 0.6, selectionLimit: 8 }, (res) => {
-            if (!res.didCancel) {
-                const selectedImages = res.assets.map(asset => ({
-                    uri: asset.uri,
-                    type: asset.type,
-                    name: asset.fileName
-                }));
-                setImages([])
-                setLoading(true)
-                UploadImageGetUrl(selectedImages);
-            }
-        });
+        if(images.length == 8){
+            ToastAndroid.show("Images limit reached, remove some to add more", ToastAndroid.SHORT)
+        }else{
+            launchImageLibrary({ mediaType: 'photo', quality: 0.6, selectionLimit: 8 }, (res) => {
+                if (!res.didCancel) {
+                    const selectedImages = res.assets.map(asset => ({
+                        uri: asset.uri,
+                        type: asset.type,
+                        name: asset.fileName
+                    }));
+                    setLoading(true)
+                    UploadImageGetUrl(selectedImages[0].uri);
+                }
+            });
+        }
     };
 
     const [loading, setLoading] = useState(false)
@@ -47,7 +52,7 @@ const AddDetails = (props) => {
                         data={images}
                         horizontal={false}
                         numColumns={2}
-
+                        scrollEnabled={false}
                         renderItem={renderImages}
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={styles.imageGrid}
@@ -69,78 +74,357 @@ const AddDetails = (props) => {
 
     const [selectedOptions, setSelectedOptions] = useState({});
 
+    const [parking, setParking] = useState(false)
+    const [decoration, setDecoration] = useState(false)
+    const [wifi, setWifi] = useState(false)
+    const [bar, setBar] = useState(false)
+    const [ac, setAc] = useState(false)
+
     const handleSelect = (questionId, option) => {
         setSelectedOptions({ ...selectedOptions, [questionId]: option });
     };
 
-    const [quesData, setQuesData] = useState(null)
+    const quest = [{
+        id: 1,
+        options: [{
+            id: 1,
+            "text": 'Yes',
+        },
+        {
+            id: 2,
+            "text": 'No',
+        }],
+        "text": "Is Parking Available?"
+    },
+    {
+        id: 2,
+        options: [{
+            id: 1,
+            "text": 'Yes',
 
-    const FetchQuestions = async () => {
-        const res = await axios.get('https://apnademand.com/api/venue/questions')
-        setQuesData(res.data)
-        console.log(quesData);
-    }
+        }, {
+            id: 2,
+            "text": 'No',
+        }],
+        "text": "Is Decoration Available?"
+    },
+    {
+        id: 3,
+        options: [{
+            id: 1,
+            "text": 'Yes',
+
+        }, {
+            id: 2,
+            "text": 'No',
+        }],
+        "text": "Is WiFi Available?"
+    },
+    {
+        id: 4,
+        options: [{
+            id: 1,
+            "text": 'Yes',
+
+        }, {
+            id: 2,
+            "text": 'No',
+        }],
+        "text": "Is Bar Available?"
+    },
+    {
+        id: 5,
+        options: [{
+            id: 1,
+            "text": 'Yes',
+
+        }, {
+            id: 2,
+            "text": 'No',
+        }],
+        "text": "Is A/C Available?"
+    }]
+
+
+    const [quesData, setQuesData] = useState(quest)
+
+
+
+
+    // "Token
+    //     +
+    //     type: 1
+    // category: 1
+    // name: Dharamshala
+    // description:A spacious hall for conferences.
+    //     veg_price: 1500
+    // non_veg_price: 2000
+    // capacity: 200
+    // total_rooms: 5
+    // parking: 1
+    // decoration: 1
+    // wifi: 1
+    // bar: 1
+    // ac: 1
+    // price: 30000
+    // location:Downtown City
+    // cancellation_policy: Non - refundable"
 
     useEffect(() => {
-        FetchQuestions();
+
+
+        if (props.route.params) {
+            setVenueType(props.route.params.type)
+            setVenueId(props.route.params.venueId)
+        }
     }, [!quesData])
 
     const BasicDetails = () => {
 
         return (
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
-                {quesData.map((item) => (
 
-                    <View key={item.id} style={styles.questionContainer}>
-                        <Text style={styles.question}>{item.text}</Text>
-                        <RadioButton.Group onValueChange={(value) => handleSelect(item.id, value)} value={selectedOptions[item.id]}>
-                            {item.options.map((option, index) => (
-                                <View key={index} style={styles.radioButtonContainer}>
-                                    <RadioButton value={option.text} color="#FF5722" />
-                                    <Text style={styles.optionText}>{option.text}</Text>
-                                </View>
-                            ))}
-                        </RadioButton.Group>
+                {/* Parking Question */}
+                <View style={{ flex: 1, alignItems: 'flex-start', width: Dimensions.get('window').width }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{quesData[0].text}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton status={parking ? "checked" : 'unchecked'} color="#FF5722" onPress={() => {
+                            setParking(true)
+                        }} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            Yes
+                        </Text>
                     </View>
-                ))}
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton value={parking == null} color="#FF5722"
+                            onPress={() => {
+                                setParking(false)
+                            }}
+                            status={!parking ? "checked" : 'unchecked'} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            No
+                        </Text>
+                    </View>
+                </View>
+
+                {/* Decoration */}
+                <View style={{ flex: 1, alignItems: 'flex-start', width: Dimensions.get('window').width }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{quesData[1].text}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton status={decoration ? "checked" : 'unchecked'} color="#FF5722" onPress={() => {
+                            setDecoration(true)
+                        }} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            Yes
+                        </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton value={decoration == null} color="#FF5722"
+                            onPress={() => {
+                                setDecoration(false)
+                            }}
+                            status={!decoration ? "checked" : 'unchecked'} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            No
+                        </Text>
+                    </View>
+                </View>
+
+                {/* wifi */}
+                <View style={{ flex: 1, alignItems: 'flex-start', width: Dimensions.get('window').width }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{quesData[2].text}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton status={wifi ? "checked" : 'unchecked'} color="#FF5722" onPress={() => {
+                            setWifi(true)
+                        }} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            Yes
+                        </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton value={wifi == null} color="#FF5722"
+                            onPress={() => {
+                                setWifi(false)
+                            }}
+                            status={!wifi ? "checked" : 'unchecked'} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            No
+                        </Text>
+                    </View>
+                </View>
+
+                {/* bar */}
+
+                <View style={{ flex: 1, alignItems: 'flex-start', width: Dimensions.get('window').width }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{quesData[3].text}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton status={bar ? "checked" : 'unchecked'} color="#FF5722" onPress={() => {
+                            setBar(true)
+                        }} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            Yes
+                        </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton value={bar == null} color="#FF5722"
+                            onPress={() => {
+                                setWifi(false)
+                            }}
+                            status={!bar ? "checked" : 'unchecked'} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            No
+                        </Text>
+                    </View>
+                </View>
+
+
+                {/* ac */}
+
+                <View style={{ flex: 1, alignItems: 'flex-start', width: Dimensions.get('window').width }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{quesData[4].text}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton status={ac ? "checked" : 'unchecked'} color="#FF5722" onPress={() => {
+                            setAc(true)
+                        }} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            Yes
+                        </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <RadioButton value={ac == null} color="#FF5722"
+                            onPress={() => {
+                                setAc(false)
+                            }}
+                            status={!ac ? "checked" : 'unchecked'} />
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                            No
+                        </Text>
+                    </View>
+                </View>
+
+
+
             </ScrollView>
         );
     };
 
+    const [name, setName] = useState('')
+    const [description, setDescription] = useState(' ')
+    const [capacity, setCapacity] = useState('')
+    const [price, setPrice] = useState('')
+    const [total_rooms, setTotalRooms] = useState('')
+    const [vegPrice, setVegPrice] = useState('')
+    const [nonVegPrice, setNonVegPrice] = useState('')
+    const [location, setLocation] = useState('')
+    const [cancellation_policy, setCancellationPolicy] = useState('')
 
     const AdditionalDetails = () => {
         const additionalData = [
             { id: 1, label: 'Guest Capacity', placeholder: '600', expand: false },
-            { id: 2, label: 'Minimum Guests', placeholder: '60', expand: false },
-            { id: 3, label: 'Per Guest Price', placeholder: '₹ 300', expand: false },
-            { id: 4, label: 'Fix Prices 60 Guests', placeholder: '₹ 25000', expand: true },
-            { id: 5, label: 'Per Guest Non Veg Price', placeholder: '₹ 300', expand: false },
-            { id: 6, label: 'Fix Price Non Veg 60 Guests', placeholder: '₹ 25000', expand: true },
-            { id: 7, label: 'Per Guest Veg Price', placeholder: '₹ 300', expand: false },
-            { id: 8, label: 'Fix Price Veg 60 Guests', placeholder: '₹ 25000', expand: true },
         ]
         return (
             <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}
-                contentContainerStyle={{ alignItems: 'center', marginTop: 30 }}>
-                {additionalData.map((item, index) => {
-                    return (
-                        <View key={item.id} style={{
-                            flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
-                            borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
-                            borderColor: 'gray', marginTop: 10
-                        }}>
-                            <Text style={{ fontSize: 16, marginStart: 10 }}>{item.label}</Text>
-                            <View style={{
-                                height: '110%', width: '30%',
-                                borderStartWidth: 1, borderRadius: 9,
-                                borderColor: 'gray', alignItems: 'center',
-                                justifyContent: 'center'
-                            }}>
-                                <TextInput maxLength={5} placeholder={item.placeholder} />
-                            </View>
-                        </View>
-                    )
-                })}
+                contentContainerStyle={{ alignItems: 'center', marginTop: 30, marginBottom:100, height:Dimensions.get('window').height}}>
+
+                <TextInputPaper label="Name" mode="outlined" cursorColor="#FFCB40" activeOutlineColor="#FFCB40"
+                    style={{ width: '79%' }} value={name} onChange={(txt) => { setName(txt) }} />
+                <TextInputPaper label="Description" mode="outlined" cursorColor="#FFCB40" activeOutlineColor="#FFCB40"
+                    placeholder="Venue Description"
+                    style={{ width: '79%', height: 100 }} value={description} onChange={(txt) => { setDescription(txt) }}
+                    multiline />
+                {/* Capacity */}
+                <View style={{
+                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
+                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
+                    borderColor: 'gray', marginTop: 10
+                }}>
+                    <Text style={{ fontSize: 16, marginStart: 10 }}>Guest Capacity</Text>
+                    <View style={{
+                        height: '110%', width: '30%',
+                        borderStartWidth: 1, borderRadius: 9,
+                        borderColor: 'gray', alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <TextInput maxLength={5} placeholder="600" onChangeText={(txt) => { setCapacity(txt) }} value={capacity} />
+                    </View>
+                </View>
+
+                {/* Total Rooms */}
+                <View style={{
+                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
+                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
+                    borderColor: 'gray', marginTop: 10
+                }}>
+                    <Text style={{ fontSize: 16, marginStart: 10 }}>Total Rooms</Text>
+                    <View style={{
+                        height: '110%', width: '30%',
+                        borderStartWidth: 1, borderRadius: 9,
+                        borderColor: 'gray', alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <TextInput maxLength={5} placeholder="5" onChangeText={(txt) => { setTotalRooms(txt) }} value={total_rooms} />
+                    </View>
+                </View>
+
+                {/* price */}
+                <View style={{
+                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
+                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
+                    borderColor: 'gray', marginTop: 10
+                }}>
+                    <Text style={{ fontSize: 16, marginStart: 10 }}>Price</Text>
+                    <View style={{
+                        height: '110%', width: '30%',
+                        borderStartWidth: 1, borderRadius: 9,
+                        borderColor: 'gray', alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <TextInput maxLength={15} placeholder="30,000" onChangeText={(txt) => { setPrice(txt) }} value={price} />
+                    </View>
+                </View>
+
+                {/* Veg Price */}
+
+                <View style={{
+                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
+                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
+                    borderColor: 'gray', marginTop: 10
+                }}>
+                    <Text style={{ fontSize: 16, marginStart: 10 }}>Veg Price</Text>
+                    <View style={{
+                        height: '110%', width: '30%',
+                        borderStartWidth: 1, borderRadius: 9,
+                        borderColor: 'gray', alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <TextInput maxLength={15} placeholder="2,000" onChangeText={(txt) => { setVegPrice(txt) }} value={vegPrice} />
+                    </View>
+                </View>
+
+                {/* non veg price */}
+                <View style={{
+                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
+                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
+                    borderColor: 'gray', marginTop: 10
+                }}>
+                    <Text style={{ fontSize: 16, marginStart: 10 }}>Non Veg Price</Text>
+                    <View style={{
+                        height: '110%', width: '30%',
+                        borderStartWidth: 1, borderRadius: 9,
+                        borderColor: 'gray', alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <TextInput maxLength={15} placeholder="5,000" onChangeText={(txt) => { setNonVegPrice(txt) }} value={nonVegPrice} />
+                    </View>
+                </View>
+
+                {/* Location */}
+                <TextInputPaper label="Venue Location" mode="outlined" cursorColor="#FFCB40" activeOutlineColor="#FFCB40"
+                    style={{ width: '79%' }} value={location} onChange={(txt) => { setLocation(txt) }} />
+
+                {/* Cancellation Policy */}
+                <TextInputPaper label="Cancellation Policy" mode="outlined" cursorColor="#FFCB40" activeOutlineColor="#FFCB40"
+                    style={{ width: '79%' }} value={cancellation_policy} onChange={(txt) => { setCancellationPolicy(txt) }} />
             </ScrollView>
         )
     }
@@ -151,72 +435,10 @@ const AddDetails = (props) => {
         setSelectedOptionsVariant({ ...selectedOptionsVariant, [questionId]: option });
     };
 
-    const AddVariant = () => {
-        const quesData = [
-            { id: 1, ques: 'Banquet Halls', options: ['4 A/C Rooms', '100 Bike Parking', '10 Four Wheeler Parkings'] },
-            { id: 2, ques: 'Non Veg', options: ['Egg Manchurian', 'Egg Manchurian 1', 'Egg Manchurian 2', 'Egg Manchurian 3'] },
-            { id: 3, ques: 'Veg', options: ['Veg Manchurian', 'Veg Manchurian 1', 'Veg Manchurian 2', 'Veg Manchurian 3', 'Veg Manchurian 4', 'Veg Manchurian 5'] },
-        ];
-
-
-
-        return (
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
-                {quesData.map((item) => (
-
-                    <View key={item.id} style={styles.questionContainer}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: Dimensions.get('window').width }}>
-                            <Text style={styles.question}>{item.ques}</Text>
-                            <TextInput placeholder="" style={{
-                                width: 100, height: 30,
-                                backgroundColor: 'white', borderRadius: 10
-                            }} />
-                        </View>
-                        <RadioButton.Group onValueChange={(value) => handleSelectVariant(item.id, value)} value={selectedOptionsVariant[item.id]}>
-                            {item.options.map((option, index) => (
-                                <View key={index} style={styles.radioButtonContainer}>
-                                    <RadioButton value={option} color="#FF5722" />
-                                    <Text style={styles.optionText}>{option}</Text>
-                                </View>
-                            ))}
-                        </RadioButton.Group>
-                    </View>
-                ))}
-                <Text style={{ marginVertical: 5, fontWeight: 'bold', fontSize: 16 }}>Description</Text>
-                <TextInput style={{ borderColor: '#FFCB40', borderWidth: 1, width: '80%', height: 100, backgroundColor: 'white' }} />
-            </ScrollView>
-        );
-    }
+    
 
     const UploadImageGetUrl = async (selectedImages) => {
-        const formData = new FormData();
-        formData.append('seller_id', 2); // Replace with actual seller_id
-        selectedImages.forEach((file, index) => {
-            formData.append(`images[${index}]`, file);
-        });
-
-        const apiUrl = 'https://apnademand.com/api/venue/storeImages';
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                body: formData
-            });
-
-            const data = await response.json();
-            if (data.images) {
-                setImages(data.images); // Assuming API returns array of image URLs
-                console.log(data.images);
-                setLoading(false)
-            } else {
-                console.error('Error uploading images:', data);
-            }
-        } catch (error) {
-            console.error('Error uploading images:', error);
-        }
+        setImages([...images, selectedImages])
     };
     const forceReducer = state => !state;
     const [, forceRerender] = useReducer(forceReducer, false);
@@ -229,10 +451,18 @@ const AddDetails = (props) => {
         }
         setImages(img)
         forceRerender()
-        
+
     };
 
-    
+    const [loadingFullScreen, setLoadingFullscreen] = useState(false)
+
+    const CreateVenue = () => {
+        setLoading(true)
+        console.log(images);
+        ToastAndroid.show(`Venue ${name} Created Successfully`, ToastAndroid.SHORT)
+    }
+
+
 
     const renderImages = ({ item }) => (
         <View style={{ alignItems: 'center', justifyContent: 'center' }}
@@ -268,36 +498,38 @@ const AddDetails = (props) => {
             </View>
 
             <View style={styles.tabContainer}>
-                <TabButton title={`Add\nImages`} isSelected={selectedTab === 1} onPress={() => setSelectedTab(1)} />
-                <TabButton title={`Basic\nDetails`} isSelected={selectedTab === 2} onPress={() => setSelectedTab(2)} />
-                <TabButton title={`Additional\nDetails`} isSelected={selectedTab === 3} onPress={() => setSelectedTab(3)} />
-                <TabButton title={`Add\nVariant`} isSelected={selectedTab === 4} onPress={() => setSelectedTab(4)} />
+                <TabButton title={`Basic\nDetails`} isSelected={selectedTab === 1} onPress={() => setSelectedTab(1)} />
+                <TabButton title={`Additional\nDetails`} isSelected={selectedTab === 2} onPress={() => setSelectedTab(2)} />
+                <TabButton title={`Add\nImages`} isSelected={selectedTab === 3} onPress={() => setSelectedTab(3)} />
             </View>
 
-            {selectedTab == 1 ?
+            {selectedTab == 3 ?
                 <AddImages />
                 :
-                selectedTab == 2 ?
+                selectedTab == 1 ?
                     <BasicDetails />
                     :
-                    selectedTab == 3 ?
+                    selectedTab == 2 ?
                         <AdditionalDetails />
                         :
-                        selectedTab == 4 ?
-                            <AddVariant />
-                            :
-                            <View></View>}
+                        <View></View>}
             <Button buttonColor="#FFCB40" labelStyle={{ paddingVertical: 8 }} style={{ width: '80%', marginVertical: 10 }}
                 textColor="white" onPress={() => {
-                    if (selectedTab == 4) {
-                        ToastAndroid.show("Details added successfully", ToastAndroid.SHORT)
-                        props.navigation.goBack()
+                    if (selectedTab == 3) {
+                        CreateVenue()
                     } else {
                         setSelectedTab(selectedTab + 1)
+                        console.log(
+                            parking,
+                            decoration,
+                            wifi,
+                            bar,
+                            ac
+                        );
                     }
                 }}>
-                {selectedTab == 4 ?
-                    'Review'
+                {selectedTab == 3 ?
+                    'Create Venue'
                     :
                     'Continue'}
             </Button>

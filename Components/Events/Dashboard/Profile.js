@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, RefreshControl, ScrollView, ToastAndroid, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, RefreshControl, ScrollView, ToastAndroid, TouchableHighlight, TouchableOpacity, View, TextInput as TextInputBase } from "react-native";
 
 import ProfilePic from '../../../Assets/Icons/profile_img.svg'
-import { ActivityIndicator, Button, Card, Divider, Text, TextInput, TouchableRipple } from "react-native-paper";
+import { ActivityIndicator, Button, Card, Divider, Modal, Portal, Text, TextInput, TouchableRipple } from "react-native-paper";
 
 import Back from '../../../Assets/Icons/Back.svg'
 
@@ -27,6 +27,8 @@ const Profile = (props) => {
     const [organizerInfo, setOrganizerInfo] = useState(null)
 
     const [editMode, setEditMode] = useState(false)
+
+    const [loading, setLoading] = useState(false)
 
     const [updateData, setUpdateData] = useState(null)
 
@@ -54,12 +56,15 @@ const Profile = (props) => {
     const [state, setState] = useState(organizerInfo?.state)
     const [pincode, setPincode] = useState(organizerInfo?.zip_code)
     const [Country, setCountry] = useState(organizerInfo?.country)
+    const [organizerName, setOrganizerName] = useState(organizerInfo?.name)
+    const [token, setToken] = useState('')
 
 
     const GetToken = async () => {
         await AsyncStorage.getItem("token").then((res) => {
             if (res) {
                 GetProfile(res)
+                setToken(res)
             } else {
                 ToastAndroid.show("Authorization error", ToastAndroid.SHORT)
             }
@@ -76,31 +81,35 @@ const Profile = (props) => {
             },
         }).then(async (res) => {
             if (res.data.status) {
+                console.log(res.data.organizer);
                 setOrganizer(res.data.organizer)
                 setOrganizerInfo(res.data.organizer_info)
-                setPhone(organizer.phone)
-                setEmail(organizer.email)
-                setUsername(organizer.username)
-                setTwitter(organizer.twitter)
-                setFacebook(organizer.facebook)
-                setLinkedin(organizer.linkedin)
-                setDesignation(organizerInfo.designation)
-                setDetails(organizerInfo.details)
-                setAadhar(organizerInfo.aadhar)
-                setPan(organizerInfo.pan)
-                setGSTIN(organizerInfo.gstin)
-                setBank(organizerInfo.bank)
-                setBranch(organizerInfo.branch)
-                setAccountHolderName(organizerInfo.account_holder_name)
-                setAccountNumber(organizerInfo.account_number)
-                setIfsc(organizerInfo.ifsc)
-                setUin(organizerInfo.uin)
-                setUpi(organizerInfo.upi)
-                setAddress(organizerInfo.address)
-                setCity(organizerInfo.city)
-                setState(organizerInfo.state)
-                setPincode(organizerInfo.zip_code)
-                setCountry(organizerInfo.country)
+                if (organizer && organizerInfo) {
+                    setOrganizerName(organizerInfo.name)
+                    setPhone(organizer.phone)
+                    setEmail(organizer.email)
+                    setUsername(organizer.username)
+                    setTwitter(organizer.twitter)
+                    setFacebook(organizer.facebook)
+                    setLinkedin(organizer.linkedin)
+                    setDesignation(organizerInfo.designation)
+                    setDetails(organizerInfo.details)
+                    setAadhar(organizerInfo.aadhar)
+                    setPan(organizerInfo.pan)
+                    setGSTIN(organizerInfo.gstin)
+                    setBank(organizerInfo.bank)
+                    setBranch(organizerInfo.branch)
+                    setAccountHolderName(organizerInfo.account_holder_name)
+                    setAccountNumber(organizerInfo.account_number)
+                    setIfsc(organizerInfo.ifsc)
+                    setUin(organizerInfo.uin)
+                    setUpi(organizerInfo.upi)
+                    setAddress(organizerInfo.address)
+                    setCity(organizerInfo.city)
+                    setState(organizerInfo.state)
+                    setPincode(organizerInfo.zip_code)
+                    setCountry(organizerInfo.country)
+                }
             } else {
                 ToastAndroid.SHORT("Authorization error", ToastAndroid.SHORT)
             }
@@ -112,17 +121,23 @@ const Profile = (props) => {
     }
 
     const UpdateProfile = () => {
+        const updateData = {
+            "name": organizerName,
+            
+        }
         setEditMode(false)
     }
 
     useEffect(() => {
-        GetToken()
-
-        return () => {
-
+        if (phone) {
+            console.log(phone);
+        } else {
+            GetToken().then(() => {
+                GetProfile(token)
+            })
         }
 
-    }, [!organizer])
+    }, [organizer])
 
     return (
         <View style={{ flex: 1, width: '100%', alignItems: 'center' }}>
@@ -142,7 +157,11 @@ const Profile = (props) => {
                     if (editMode) {
                         UpdateProfile()
                     } else {
+                        setLoading(true)
                         setEditMode(true)
+                        setTimeout(() => {
+                            setLoading(false)
+                        }, 1500);
                     }
                 }} textColor="white" style={{ marginEnd: 5 }}>
                     {editMode ? "Save" : "Edit Mode"}
@@ -166,7 +185,10 @@ const Profile = (props) => {
                                 </TouchableOpacity>
 
                                 <View>
-                                    <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{organizerInfo.name}</Text>
+                                    <TextInputBase style={{ fontWeight: 'bold', fontSize: 20, color: 'black',
+                                        width:180
+                                    }} editable={editMode} value={organizerName ? organizerName : organizerInfo.name}
+                                        onChangeText={((rs) => { setOrganizerName(rs) })} underlineColorAndroid={editMode ? "black" : 'transparent'} />
                                     <Text style={{ color: '#797979' }}>{organizer.username}</Text>
                                     <Text style={{ color: '#414141' }}>{organizer.email}</Text>
                                 </View>
@@ -178,11 +200,11 @@ const Profile = (props) => {
 
                                 <View style={{ marginTop: 5 }}>
                                     <View>
-                                        <TextInput mode="flat" value={phone} disabled={!editMode} activeOutlineColor="#FFCB40"
-                                            label="Phone" />
-                                        <TextInput mode="flat" value={username} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={phone} disabled activeOutlineColor="#FFCB40"
+                                            label="Phone" onChangeText={((rs) => { setPhone(rs) })} />
+                                        <TextInput mode="flat" value={username} disabled activeOutlineColor="#FFCB40"
                                             label="Username" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={email} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={email} disabled activeOutlineColor="#FFCB40"
                                             label="Email" style={{ marginTop: 5 }} />
                                         <TextInput mode="flat" value={twitter} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Twitter" style={{ marginTop: 5 }} />
@@ -243,6 +265,15 @@ const Profile = (props) => {
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <ActivityIndicator color="#FFCB40" size={50} />
                     </View>}
+                {loading ?
+                    <Portal>
+                        <Modal style={{ flex: 1, width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
+                            visible={loading}>
+                            <ActivityIndicator color="#FFCB40" />
+                        </Modal>
+                    </Portal>
+                    :
+                    null}
             </ScrollView>
         </View>
     )
