@@ -120,12 +120,55 @@ const Profile = (props) => {
 
     }
 
-    const UpdateProfile = () => {
+    const UpdateProfile = async () => {
+        setLoading(true);
         const updateData = {
-            "name": organizerName,
-            
-        }
-        setEditMode(false)
+            name: organizerName,
+            phone: phone,
+            gstin: GSTIN ? GSTIN : null,
+            uin: uin ? uin : null,
+            pan: pan ? pan : null,
+            aadhar: aadhar ? aadhar : null,
+            account_holder_name: accountHolderName ? accountHolderName : null,
+            account_number: accountNumber ? accountNumber : null,
+            ifsc: ifsc ? ifsc : null,
+            branch: branch ? branch : null,
+            bank: bank ? bank : null,
+            upi: upi ? upi : null,
+            country: Country ? Country : null,
+            city: city ? city : null,
+            state: state ? state : null,
+            zip_code: pincode ? pincode : null,
+            address: address ? address : null,
+            details: details ? details : null,
+            designation: designation ? designation : null,
+            facebook: facebook ? facebook : null,
+            twitter: twitter ? twitter : null,
+            linkedin: linkedin ? linkedin : null,
+        };
+
+        console.log(updateData);
+
+
+        await axios.post(
+            'https://event.apnademand.com/public/api/updateOrganizer',
+            updateData,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+            .then((response) => {
+                ToastAndroid.show(response.data.message, ToastAndroid.SHORT)
+                setEditMode(false);
+                setLoading(false);
+            })
+            .catch((error) => {
+                ToastAndroid.show("An error occured while updating, Try again!", ToastAndroid.SHORT)
+                setLoading(false);
+            });
     }
 
     useEffect(() => {
@@ -153,19 +196,36 @@ const Profile = (props) => {
                     <Back />
                 </TouchableRipple>
 
-                <Button buttonColor="#FFCB40" onPress={() => {
-                    if (editMode) {
-                        UpdateProfile()
-                    } else {
-                        setLoading(true)
-                        setEditMode(true)
-                        setTimeout(() => {
-                            setLoading(false)
-                        }, 1500);
-                    }
-                }} textColor="white" style={{ marginEnd: 5 }}>
-                    {editMode ? "Save" : "Edit Mode"}
-                </Button>
+                <View style={{ flexDirection: 'row' }}>
+                    {editMode ?
+                        <Button buttonColor="red" mode="contained"
+                            style={{ marginEnd: 20 }} onPress={() => { 
+                                setLoading(true)
+                                setEditMode(false)
+                                setTimeout(() => {
+                                    setLoading(false)
+                                }, 1000);
+                             }}>
+                            <Text style={{
+                                color: '#fff', fontSize: 16, fontWeight: 'bold'
+                            }}>Cancel</Text>
+                        </Button>
+                        :
+                        null}
+                    <Button buttonColor="#FFCB40" onPress={() => {
+                        if (editMode) {
+                            UpdateProfile()
+                        } else {
+                            setLoading(true)
+                            setEditMode(true)
+                            setTimeout(() => {
+                                setLoading(false)
+                            }, 1500);
+                        }
+                    }} textColor="white" style={{ marginEnd: 5 }}>
+                        {editMode ? "Save" : "Edit Mode"}
+                    </Button>
+                </View>
             </View>
 
             <ScrollView style={{ width: '100%', flex: 1 }} contentContainerStyle={{ alignItems: 'center' }}>
@@ -185,8 +245,9 @@ const Profile = (props) => {
                                 </TouchableOpacity>
 
                                 <View>
-                                    <TextInputBase style={{ fontWeight: 'bold', fontSize: 20, color: 'black',
-                                        width:180
+                                    <TextInputBase style={{
+                                        fontWeight: 'bold', fontSize: 20, color: 'black',
+                                        width: 180
                                     }} editable={editMode} value={organizerName ? organizerName : organizerInfo.name}
                                         onChangeText={((rs) => { setOrganizerName(rs) })} underlineColorAndroid={editMode ? "black" : 'transparent'} />
                                     <Text style={{ color: '#797979' }}>{organizer.username}</Text>
@@ -200,61 +261,61 @@ const Profile = (props) => {
 
                                 <View style={{ marginTop: 5 }}>
                                     <View>
-                                        <TextInput mode="flat" value={phone} disabled activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={phone ? phone : organizer.phone} disabled activeOutlineColor="#FFCB40"
                                             label="Phone" onChangeText={((rs) => { setPhone(rs) })} />
-                                        <TextInput mode="flat" value={username} disabled activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={username ? username : organizer.username} disabled activeOutlineColor="#FFCB40"
                                             label="Username" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={email} disabled activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={email ? email : organizer.email} disabled activeOutlineColor="#FFCB40"
                                             label="Email" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={twitter} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={twitter ? twitter : organizer.twitter} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Twitter" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={linkedin} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={linkedin ? linkedin : organizer.linkedin} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="LinkedIn" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={facebook} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={facebook ? facebook : organizer.facebook} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Facebook" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={designation} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={designation ? designation : organizerInfo.designation} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Designation" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={details} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={details ? details : organizerInfo.details} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Details" style={{ marginTop: 5 }} />
                                     </View>
                                     <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Document Details:</Text>
                                     <Divider style={{ backgroundColor: '#A0A0A0', marginTop: 10 }} />
 
                                     <View style={{ marginTop: 5 }}>
-                                        <TextInput mode="flat" value={aadhar} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={aadhar ? aadhar : organizerInfo.aadhar} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Aadhar Number" />
-                                        <TextInput mode="flat" value={pan} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={pan ? pan : organizerInfo.pan} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="PAN Number" />
-                                        <TextInput mode="flat" value={GSTIN} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={GSTIN ? GSTIN : organizerInfo.gstin} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="GSTIN" />
-                                        <TextInput mode="flat" value={bank} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={bank ? bank : organizerInfo.bank} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Bank Name" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={organizerInfo.branch} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={branch ? branch : organizerInfo.branch} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Branch" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={accountHolderName} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={accountHolderName ? accountHolderName : organizerInfo.account_holder_name} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Account Holder Name" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={accountNumber} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={accountNumber ? accountNumber : organizerInfo.account_number} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Account Number" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={ifsc} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={ifsc ? ifsc : organizerInfo.ifsc} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="IFSC" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={uin} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={uin ? uin : organizerInfo.uin} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="UIN" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={upi} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={upi ? upi : organizerInfo.upi} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="UPI ID" style={{ marginTop: 5 }} />
                                     </View>
 
                                     <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Address Details:</Text>
                                     <Divider style={{ backgroundColor: '#A0A0A0', marginTop: 10 }} />
                                     <View style={{ marginTop: 5 }}>
-                                        <TextInput mode="flat" value={address} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={address ? address : organizerInfo.address} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Address" />
-                                        <TextInput mode="flat" value={city} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={city ? city : organizerInfo.city} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="City" />
-                                        <TextInput mode="flat" value={state} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={state ? state : organizerInfo.state} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="State" />
-                                        <TextInput mode="flat" value={pincode} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={pincode ? pincode : organizerInfo.zip_code} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Pincode" style={{ marginTop: 5 }} />
-                                        <TextInput mode="flat" value={Country} disabled={!editMode} activeOutlineColor="#FFCB40"
+                                        <TextInput mode="flat" value={Country ? Country : organizerInfo.country} disabled={!editMode} activeOutlineColor="#FFCB40"
                                             label="Country" style={{ marginTop: 5 }} />
                                     </View>
                                 </View>

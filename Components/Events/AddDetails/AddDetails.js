@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { Image, ScrollView, View, TouchableOpacity, FlatList, StyleSheet, Dimensions, TextInput, ToastAndroid } from "react-native";
+
 import { ActivityIndicator, Button, Modal, Portal, RadioButton, Text, TouchableRipple, TextInput as TextInputPaper } from "react-native-paper";
 import Uncheck from '../../../Assets/Icons/circle_uncheck.svg'
 import Check from '../../../Assets/Icons/circle_check.svg'
@@ -8,17 +9,18 @@ import Chat from '../../../Assets/Icons/chat.svg'
 import Add from '../../../Assets/Icons/add.svg'
 import { launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AddDetails = (props) => {
     const [selectedTab, setSelectedTab] = useState(1);
     const [images, setImages] = useState([]);
-    const [venueId, setVenueId] = useState('')
-    const [venueType, setVenueType] = useState('')
+    const [venueId, setVenueId] = useState(0)
+    const [venueType, setVenueType] = useState(0)
 
     const SelectAndUploadImage = () => {
-        if(images.length == 8){
+        if (images.length == 8) {
             ToastAndroid.show("Images limit reached, remove some to add more", ToastAndroid.SHORT)
-        }else{
+        } else {
             launchImageLibrary({ mediaType: 'photo', quality: 0.6, selectionLimit: 8 }, (res) => {
                 if (!res.didCancel) {
                     const selectedImages = res.assets.map(asset => ({
@@ -27,7 +29,15 @@ const AddDetails = (props) => {
                         name: asset.fileName
                     }));
                     setLoading(true)
-                    UploadImageGetUrl(selectedImages[0].uri);
+                    // UploadImageGetUrl(selectedImages[0].uri);
+                    if (selectedImages.length > 1) {
+                        selectedImages.map((image) => {
+                            console.log(image.uri);
+
+                        })
+                    } else {
+                        UploadImageGetUrl(selectedImages[0].uri)
+                    }
                 }
             });
         }
@@ -309,122 +319,166 @@ const AddDetails = (props) => {
     };
 
     const [name, setName] = useState('')
-    const [description, setDescription] = useState(' ')
-    const [capacity, setCapacity] = useState('')
-    const [price, setPrice] = useState('')
-    const [total_rooms, setTotalRooms] = useState('')
-    const [vegPrice, setVegPrice] = useState('')
-    const [nonVegPrice, setNonVegPrice] = useState('')
+    const [description, setDescription] = useState('')
+    const [capacity, setCapacity] = useState(0)
+    const [price, setPrice] = useState(0)
+    const [total_rooms, setTotalRooms] = useState(0)
+    const [vegPrice, setVegPrice] = useState(0)
+    const [nonVegPrice, setNonVegPrice] = useState(0)
     const [location, setLocation] = useState('')
     const [cancellation_policy, setCancellationPolicy] = useState('')
 
     const AdditionalDetails = () => {
-        const additionalData = [
-            { id: 1, label: 'Guest Capacity', placeholder: '600', expand: false },
-        ]
         return (
             <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}
-                contentContainerStyle={{ alignItems: 'center', marginTop: 30, marginBottom:100, height:Dimensions.get('window').height}}>
+                contentContainerStyle={{ alignItems: 'center', marginTop: 30, marginBottom: 100, height: Dimensions.get('window').height }}>
+                {/* Name
+                description
+                capacity
+                rooms
+                price
+                veg price
+                non veg price
+                location
+                cancellation policy */}
 
-                <TextInputPaper label="Name" mode="outlined" cursorColor="#FFCB40" activeOutlineColor="#FFCB40"
-                    style={{ width: '79%' }} value={name} onChange={(txt) => { setName(txt) }} />
-                <TextInputPaper label="Description" mode="outlined" cursorColor="#FFCB40" activeOutlineColor="#FFCB40"
-                    placeholder="Venue Description"
-                    style={{ width: '79%', height: 100 }} value={description} onChange={(txt) => { setDescription(txt) }}
-                    multiline />
-                {/* Capacity */}
-                <View style={{
-                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
-                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
-                    borderColor: 'gray', marginTop: 10
-                }}>
-                    <Text style={{ fontSize: 16, marginStart: 10 }}>Guest Capacity</Text>
-                    <View style={{
-                        height: '110%', width: '30%',
-                        borderStartWidth: 1, borderRadius: 9,
-                        borderColor: 'gray', alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <TextInput maxLength={5} placeholder="600" onChangeText={(txt) => { setCapacity(txt) }} value={capacity} />
-                    </View>
-                </View>
+                <TextInput
+                    placeholder="Name"
+                    value={name}
+                    onChangeText={(text) => setName(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3
+                    }}
+                    cursorColor="#FFCB40"
+                />
+                <TextInput
+                    placeholder="Description"
+                    value={description}
+                    multiline
+                    onChangeText={(text) => setDescription(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3,
+                        height: 100,
+                        marginTop: 10
+                    }}
+                    cursorColor="#FFCB40"
+                />
+                <TextInput
+                    placeholder="Capacity"
+                    value={capacity}
+                    onChangeText={(text) => setCapacity(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3,
+                        marginTop: 10
+                    }}
+                    cursorColor="#FFCB40"
+                />
+                <TextInput
+                    placeholder="Total Rooms"
+                    value={total_rooms}
+                    onChangeText={(text) => setTotalRooms(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3,
+                        marginTop: 10
+                    }}
+                    cursorColor="#FFCB40"
+                />
+                <TextInput
+                    placeholder="Price"
+                    value={price}
+                    onChangeText={(text) => setPrice(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3,
+                        marginTop: 10
+                    }}
+                    cursorColor="#FFCB40"
+                />
+                <TextInput
+                    placeholder="Veg Price"
+                    value={setVegPrice}
+                    onChangeText={(text) => setVegPrice(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3,
+                        marginTop: 10
+                    }}
+                    cursorColor="#FFCB40"
+                />
+                <TextInput
+                    placeholder="Non Veg Price"
+                    value={setVegPrice}
+                    onChangeText={(text) => setNonVegPrice(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3,
+                        marginTop: 10
+                    }}
+                    cursorColor="#FFCB40"
+                />
+                <TextInput
+                    placeholder="Location"
+                    value={location}
+                    onChangeText={(text) => setLocation(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3,
+                        marginTop: 10
+                    }}
+                    cursorColor="#FFCB40"
+                />
+                <TextInput
+                    placeholder="Cancellation Policy"
+                    value={cancellation_policy}
+                    onChangeText={(text) => setCancellationPolicy(text)}
+                    style={{
+                        width: '90%',
+                        borderColor: 'gray',
+                        borderWidth: 0.6,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 15,
+                        borderRadius: 3,
+                        marginTop: 10
+                    }}
+                    cursorColor="#FFCB40"
+                />
 
-                {/* Total Rooms */}
-                <View style={{
-                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
-                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
-                    borderColor: 'gray', marginTop: 10
-                }}>
-                    <Text style={{ fontSize: 16, marginStart: 10 }}>Total Rooms</Text>
-                    <View style={{
-                        height: '110%', width: '30%',
-                        borderStartWidth: 1, borderRadius: 9,
-                        borderColor: 'gray', alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <TextInput maxLength={5} placeholder="5" onChangeText={(txt) => { setTotalRooms(txt) }} value={total_rooms} />
-                    </View>
-                </View>
-
-                {/* price */}
-                <View style={{
-                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
-                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
-                    borderColor: 'gray', marginTop: 10
-                }}>
-                    <Text style={{ fontSize: 16, marginStart: 10 }}>Price</Text>
-                    <View style={{
-                        height: '110%', width: '30%',
-                        borderStartWidth: 1, borderRadius: 9,
-                        borderColor: 'gray', alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <TextInput maxLength={15} placeholder="30,000" onChangeText={(txt) => { setPrice(txt) }} value={price} />
-                    </View>
-                </View>
-
-                {/* Veg Price */}
-
-                <View style={{
-                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
-                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
-                    borderColor: 'gray', marginTop: 10
-                }}>
-                    <Text style={{ fontSize: 16, marginStart: 10 }}>Veg Price</Text>
-                    <View style={{
-                        height: '110%', width: '30%',
-                        borderStartWidth: 1, borderRadius: 9,
-                        borderColor: 'gray', alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <TextInput maxLength={15} placeholder="2,000" onChangeText={(txt) => { setVegPrice(txt) }} value={vegPrice} />
-                    </View>
-                </View>
-
-                {/* non veg price */}
-                <View style={{
-                    flexDirection: 'row', width: '80%', height: 45, backgroundColor: 'white',
-                    borderRadius: 10, borderWidth: 1, justifyContent: 'space-between', alignItems: 'center',
-                    borderColor: 'gray', marginTop: 10
-                }}>
-                    <Text style={{ fontSize: 16, marginStart: 10 }}>Non Veg Price</Text>
-                    <View style={{
-                        height: '110%', width: '30%',
-                        borderStartWidth: 1, borderRadius: 9,
-                        borderColor: 'gray', alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <TextInput maxLength={15} placeholder="5,000" onChangeText={(txt) => { setNonVegPrice(txt) }} value={nonVegPrice} />
-                    </View>
-                </View>
-
-                {/* Location */}
-                <TextInputPaper label="Venue Location" mode="outlined" cursorColor="#FFCB40" activeOutlineColor="#FFCB40"
-                    style={{ width: '79%' }} value={location} onChange={(txt) => { setLocation(txt) }} />
-
-                {/* Cancellation Policy */}
-                <TextInputPaper label="Cancellation Policy" mode="outlined" cursorColor="#FFCB40" activeOutlineColor="#FFCB40"
-                    style={{ width: '79%' }} value={cancellation_policy} onChange={(txt) => { setCancellationPolicy(txt) }} />
             </ScrollView>
         )
     }
@@ -435,7 +489,7 @@ const AddDetails = (props) => {
         setSelectedOptionsVariant({ ...selectedOptionsVariant, [questionId]: option });
     };
 
-    
+
 
     const UploadImageGetUrl = async (selectedImages) => {
         setImages([...images, selectedImages])
@@ -456,10 +510,47 @@ const AddDetails = (props) => {
 
     const [loadingFullScreen, setLoadingFullscreen] = useState(false)
 
-    const CreateVenue = () => {
-        setLoading(true)
-        console.log(images);
-        ToastAndroid.show(`Venue ${name} Created Successfully`, ToastAndroid.SHORT)
+    const CreateVenue = async () => {
+
+        const token = await AsyncStorage.getItem('token')
+
+        if (images.length == 0) {
+            const createData = {
+                "type": venueType,
+                "category": venueId,
+                "name": name,
+                "description": description ? description : null,
+                "veg_price": vegPrice ? vegPrice : null,
+                "non_veg_price": nonVegPrice ? nonVegPrice : null,
+                "capacity": capacity,
+                "total_rooms": total_rooms,
+                "parking": parking ? 1 : 0,
+                "decoration": decoration ? 1 : 0,
+                'wifi': wifi ? 1 : 0,
+                'bar': bar ? 1 : 0,
+                'ac': ac ? 1 : 0,
+                'price': price,
+                'location': location,
+                "cancellation_policy": cancellation_policy ? cancellation_policy : null,
+            }
+            console.log(createData);
+
+            axios.post('https://event.apnademand.com/public/api/createvenue', createData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then((rs) => {
+                console.log(rs.data);
+
+            }).catch((err) => {
+                console.log(err);
+
+            })
+        } else {
+
+
+        }
+
     }
 
 

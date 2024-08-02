@@ -28,32 +28,51 @@ const LandingPage = (props) => {
     const NavigateToEvents = async () => {
         const email = await AsyncStorage.getItem('email')
         const password = await AsyncStorage.getItem('password')
-        if (email && password) {
+        const token = await AsyncStorage.getItem('token')
+        if (token && email && password) {
             setLoading(true)
-            const loginData = {
-                "email": email,
-                "password": password
-            }
+            // const loginData = {
+            //     "email": email,
+            //     "password": password
+            // }
 
-            await axios.post('https://event.apnademand.com/public/api/organizerlogin', loginData).then(async (rs) => {
+            // await axios.post('https://event.apnademand.com/public/api/organizerlogin', loginData).then(async (rs) => {
 
-                await AsyncStorage.setItem('token', rs.data.api_token).then(() => {
-                    setTimeout(() => {
-                        props.navigation.replace("Dashboard")
-                    }, 1000);
+            //     await AsyncStorage.setItem('token', rs.data.api_token).then(() => {
+            //         setTimeout(() => {
+            //             props.navigation.replace("Dashboard")
+            //         }, 1000);
 
-                });
+            //     });
 
-            }, error => {
+            // }, error => {
+            //     setLoading(false)
+            //     console.log(error);
+            // })
+            await axios.get('https://event.apnademand.com/public/api/getOrganizer', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then((rs)=>{
+                if(rs.data.status){
+                    setLoading(false)
+                    props.navigation.replace("Dashboard")
+                }else{
+                    setLoading(false)
+                    ToastAndroid.show("Authorization Error, Login again!", ToastAndroid.SHORT)
+                    props.navigation.navigate("EventLogin")
+                }
+                
+            }).catch((err)=>{
                 setLoading(false)
-                console.log(error);
+                props.navigation.navigate('EventLogin')
             })
+            
         } else {
             setLoading(true)
             setTimeout(() => {
                 props.navigation.navigate("EventLogin")
                 setLoading(false)
-
             }, 2000);
         }
     }
